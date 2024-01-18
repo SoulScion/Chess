@@ -54,9 +54,6 @@ public class ChessMove {
             return promotePiece;
         }
 
-
-
-
         // FINISHED: throw new RuntimeException("Not implemented");
     }
 }
