@@ -12,8 +12,8 @@ public class ChessPosition {
     private int pieceCol;
 
     public ChessPosition(int row, int col) {
-        pieceRow = row;
-        pieceCol = col;
+        this.pieceRow = row;
+        this.pieceCol = col;
     }
 
     /**
@@ -24,7 +24,7 @@ public class ChessPosition {
 
         return pieceRow;
 
-        throw new RuntimeException("Not implemented");
+        // FINISHED: throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -35,6 +35,6 @@ public class ChessPosition {
 
         return pieceCol;
 
-        throw new RuntimeException("Not implemented");
+        // FINISHED: throw new RuntimeException("Not implemented");
     }
 }
