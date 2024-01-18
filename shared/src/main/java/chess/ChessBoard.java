@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Arrays;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -7,6 +9,20 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Arrays.deepEquals(chessBoard, that.chessBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(chessBoard);
+    }
+    // ^ Possibly don't have to have a hashcode
 
     private ChessPiece [][] chessBoard;
     public ChessBoard() {
@@ -21,7 +37,7 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
 
-        chessBoard[position.getRow()][position.getColumn()] = piece;
+        chessBoard[position.getRow()-1][position.getColumn()-1] = piece;
 
         // FINISHED: throw new RuntimeException("Not implemented");
     }
@@ -35,8 +51,8 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
 
-        if (position != null) {
-            return chessBoard[position.getRow()][position.getColumn()];
+        if (chessBoard[position.getRow()-1][position.getColumn()-1] != null) {
+            return chessBoard[position.getRow()-1][position.getColumn()-1];
         } else {
             return null;
         }
@@ -85,6 +101,6 @@ public class ChessBoard {
         addPiece(new ChessPosition(0,6), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(0,7), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
 
-        // FINISHEDthrow new RuntimeException("Not implemented");
+        // FINISHED: throw new RuntimeException("Not implemented");
     }
 }
