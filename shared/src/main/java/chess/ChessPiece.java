@@ -78,7 +78,7 @@ public class ChessPiece {
         ChessPiece movingPiece = board.getPiece(myPosition);
 
         if (movingPiece.type == PieceType.KING) {
-            return null;
+            return kingMoves(movingPiece, board, myPosition);
         } else if (movingPiece.type == PieceType.QUEEN){
             return null;
         } else if (movingPiece.type == PieceType.BISHOP) {
@@ -104,7 +104,7 @@ public class ChessPiece {
         }
     }
 
-    private Collection<ChessMove> kingPiece(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+    private Collection<ChessMove> kingMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
         Vector<ChessMove> validKingMoves = new Vector<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
@@ -242,8 +242,21 @@ public class ChessPiece {
         // FINISHING: throw new RuntimeException("Not implemented");
     }
 
-    private Collection<ChessMove> knightMoves(ChessPiece piece, ChessBoard board, ChessPosition myPosition) {
-        return null;
+    private Collection<ChessMove> knightMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        Vector<ChessMove> validKingMoves = new Vector<>();
+        int tempx = piecePosition.getRow();
+        int tempy = piecePosition.getColumn();
+
+        validMove(piecePosition.getRow() + 2, piecePosition.getColumn() + 1, board, piece, piecePosition, validKingMoves);
+        validMove(piecePosition.getRow() + 2, piecePosition.getColumn() - 1, board, piece, piecePosition, validKingMoves);
+        validMove(piecePosition.getRow() - 2, piecePosition.getColumn() + 1, board, piece, piecePosition, validKingMoves);
+        validMove(piecePosition.getRow() - 2, piecePosition.getColumn() - 1, board, piece, piecePosition, validKingMoves);
+        validMove(piecePosition.getRow() - 1, piecePosition.getColumn() + 2, board, piece, piecePosition, validKingMoves);
+        validMove(piecePosition.getRow() + 1, piecePosition.getColumn() + 2, board, piece, piecePosition, validKingMoves);
+        validMove(piecePosition.getRow() - 1, piecePosition.getColumn() - 2, board, piece, piecePosition, validKingMoves);
+        validMove(piecePosition.getRow() + 1, piecePosition.getColumn() - 2, board, piece, piecePosition, validKingMoves);
+
+        return validKingMoves;
     }
 
     private Collection<ChessMove> pawnMoves(ChessPiece piece, ChessBoard board, ChessPosition myPosition) {
