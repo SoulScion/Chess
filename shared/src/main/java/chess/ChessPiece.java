@@ -86,7 +86,7 @@ public class ChessPiece {
         } else if (movingPiece.type == PieceType.KNIGHT) {
             return knightMoves(movingPiece, board, myPosition);
         } else if (movingPiece.type == PieceType.ROOK) {
-            return null;
+            return rookMoves(movingPiece, board, myPosition);
         } else if (movingPiece.type == PieceType.PAWN) {
             return null;
         }
@@ -104,7 +104,7 @@ public class ChessPiece {
         }
     }
 
-    private Collection<ChessMove> kingMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+    private Vector<ChessMove> kingMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
         Vector<ChessMove> validKingMoves = new Vector<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
@@ -121,11 +121,15 @@ public class ChessPiece {
         return validKingMoves;
     }
 
-    private Collection<ChessMove> queenMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
-        return null;
+    private Vector<ChessMove> queenMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        Vector<ChessMove> validQueenMoves = new Vector<>();
+        validQueenMoves = bishopMoves(piece, board, piecePosition);
+        validQueenMoves.addAll(rookMoves(piece, board, piecePosition));
+
+        return validQueenMoves;
     }
 
-    private Collection<ChessMove> bishopMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+    private Vector<ChessMove> bishopMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
         Vector<ChessMove> validBishopMoves = new Vector<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
@@ -242,7 +246,7 @@ public class ChessPiece {
         // FINISHING: throw new RuntimeException("Not implemented");
     }
 
-    private Collection<ChessMove> knightMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+    private Vector<ChessMove> knightMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
         Vector<ChessMove> validKnightMoves = new Vector<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
@@ -259,7 +263,7 @@ public class ChessPiece {
         return validKnightMoves;
     }
 
-    private Collection<ChessMove> rookMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+    private Vector<ChessMove> rookMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
         Vector<ChessMove> validRookMoves = new Vector<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
@@ -270,7 +274,7 @@ public class ChessPiece {
                 if (board.getPiece(new ChessPosition(tempx, tempy)) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
                     // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
                     // if (piece.pieceColor != tempPiece.pieceColor) {
-                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
                     // System Check:
                     System.out.printf("%d, %d\n", tempx, tempy);
                     //} else {
@@ -298,7 +302,7 @@ public class ChessPiece {
                 if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
                     // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
                     // if (piece.pieceColor != tempPiece.pieceColor) {
-                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
                     // System Check:
                     System.out.printf("%d, %d\n", tempx, tempy);
                     //} else {
@@ -326,7 +330,7 @@ public class ChessPiece {
                 if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
                     // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
                     // if (piece.pieceColor != tempPiece.pieceColor) {
-                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
                     // System Check:
                     System.out.printf("%d, %d\n", tempx, tempy);
                     //} else {
@@ -352,7 +356,7 @@ public class ChessPiece {
             tempy = tempy - 1;
             if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
                 if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
-                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
                     // System Check:
                     // System.out.printf("%d, %d\n", tempx, tempy);
                     if (board.getPiece(new ChessPosition(tempx, tempy )) != null) { // Third Check
@@ -371,7 +375,7 @@ public class ChessPiece {
         return validRookMoves;
     }
 
-    private Collection<ChessMove> pawnMoves(ChessPiece piece, ChessBoard board, ChessPosition myPosition) {
+    private Vector<ChessMove> pawnMoves(ChessPiece piece, ChessBoard board, ChessPosition myPosition) {
         return null;
     }
 
