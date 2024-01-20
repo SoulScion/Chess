@@ -84,7 +84,7 @@ public class ChessPiece {
         } else if (movingPiece.type == PieceType.BISHOP) {
             return bishopMoves(movingPiece, board, myPosition);
         } else if (movingPiece.type == PieceType.KNIGHT) {
-            return null;
+            return knightMoves(movingPiece, board, myPosition);
         } else if (movingPiece.type == PieceType.ROOK) {
             return null;
         } else if (movingPiece.type == PieceType.PAWN) {
@@ -243,20 +243,132 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> knightMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
-        Vector<ChessMove> validKingMoves = new Vector<>();
+        Vector<ChessMove> validKnightMoves = new Vector<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
 
-        validMove(piecePosition.getRow() + 2, piecePosition.getColumn() + 1, board, piece, piecePosition, validKingMoves);
-        validMove(piecePosition.getRow() + 2, piecePosition.getColumn() - 1, board, piece, piecePosition, validKingMoves);
-        validMove(piecePosition.getRow() - 2, piecePosition.getColumn() + 1, board, piece, piecePosition, validKingMoves);
-        validMove(piecePosition.getRow() - 2, piecePosition.getColumn() - 1, board, piece, piecePosition, validKingMoves);
-        validMove(piecePosition.getRow() - 1, piecePosition.getColumn() + 2, board, piece, piecePosition, validKingMoves);
-        validMove(piecePosition.getRow() + 1, piecePosition.getColumn() + 2, board, piece, piecePosition, validKingMoves);
-        validMove(piecePosition.getRow() - 1, piecePosition.getColumn() - 2, board, piece, piecePosition, validKingMoves);
-        validMove(piecePosition.getRow() + 1, piecePosition.getColumn() - 2, board, piece, piecePosition, validKingMoves);
+        validMove(piecePosition.getRow() + 2, piecePosition.getColumn() + 1, board, piece, piecePosition, validKnightMoves);
+        validMove(piecePosition.getRow() + 2, piecePosition.getColumn() - 1, board, piece, piecePosition, validKnightMoves);
+        validMove(piecePosition.getRow() - 2, piecePosition.getColumn() + 1, board, piece, piecePosition, validKnightMoves);
+        validMove(piecePosition.getRow() - 2, piecePosition.getColumn() - 1, board, piece, piecePosition, validKnightMoves);
+        validMove(piecePosition.getRow() - 1, piecePosition.getColumn() + 2, board, piece, piecePosition, validKnightMoves);
+        validMove(piecePosition.getRow() + 1, piecePosition.getColumn() + 2, board, piece, piecePosition, validKnightMoves);
+        validMove(piecePosition.getRow() - 1, piecePosition.getColumn() - 2, board, piece, piecePosition, validKnightMoves);
+        validMove(piecePosition.getRow() + 1, piecePosition.getColumn() - 2, board, piece, piecePosition, validKnightMoves);
 
-        return validKingMoves;
+        return validKnightMoves;
+    }
+
+    private Collection<ChessMove> rookMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        Vector<ChessMove> validRookMoves = new Vector<>();
+        int tempx = piecePosition.getRow();
+        int tempy = piecePosition.getColumn();
+
+        while(true) {
+            tempx = tempx + 1;
+            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
+                if (board.getPiece(new ChessPosition(tempx, tempy)) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
+                    // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
+                    // if (piece.pieceColor != tempPiece.pieceColor) {
+                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    // System Check:
+                    System.out.printf("%d, %d\n", tempx, tempy);
+                    //} else {
+                    //    break;
+                    //}
+                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) {
+                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+                            break;
+                        }
+                    }
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        tempx = piecePosition.getRow();
+        tempy = piecePosition.getColumn();
+
+        while(true) {
+            tempx = tempx - 1;
+            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
+                if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
+                    // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
+                    // if (piece.pieceColor != tempPiece.pieceColor) {
+                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    // System Check:
+                    System.out.printf("%d, %d\n", tempx, tempy);
+                    //} else {
+                    //    break;
+                    //}
+                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) {
+                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+                            break;
+                        }
+                    }
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        tempx = piecePosition.getRow();
+        tempy = piecePosition.getColumn();
+
+        while(true) {
+            tempy = tempy + 1;
+            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
+                if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
+                    // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
+                    // if (piece.pieceColor != tempPiece.pieceColor) {
+                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    // System Check:
+                    System.out.printf("%d, %d\n", tempx, tempy);
+                    //} else {
+                    //    break;
+                    //}
+                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) {
+                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+                            break;
+                        }
+                    }
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        tempx = piecePosition.getRow();
+        tempy = piecePosition.getColumn();
+
+        while(true) {
+            tempy = tempy - 1;
+            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
+                if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
+                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    // System Check:
+                    // System.out.printf("%d, %d\n", tempx, tempy);
+                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) { // Third Check
+                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+                            break;
+                        }
+                    }
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        return validRookMoves;
     }
 
     private Collection<ChessMove> pawnMoves(ChessPiece piece, ChessBoard board, ChessPosition myPosition) {
