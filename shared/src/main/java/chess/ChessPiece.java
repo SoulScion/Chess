@@ -1,6 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
+import java.util.Vector;
 import java.util.Collection;
 
 /**
@@ -60,18 +60,104 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> possibleMoveCollection = new ArrayList<ChessMove>();
+        Collection<ChessMove> possibleMoveCollection = new Vector<ChessMove>();
         ChessPiece movingPiece = board.getPiece(myPosition);
 
-        /*
-         * if (ChessPiece.type == KING) {
-         *
-         *
-         *
-         * }
-         */
+        if (movingPiece.type == PieceType.KING) {
+            return null;
+        } else if (movingPiece.type == PieceType.QUEEN){
+            return null;
+        } else if (movingPiece.type == PieceType.BISHOP) {
+            return null;
+        } else if (movingPiece.type == PieceType.KNIGHT) {
+            return null;
+        } else if (movingPiece.type == PieceType.ROOK) {
+            return null;
+        } else if (movingPiece.type == PieceType.PAWN) {
+            return null;
+        }
 
         throw new RuntimeException("Not implemented");
     }
+
+    private void validMove(int x, int y, ChessBoard board, ChessPiece pieceChecked, ChessPosition piecePosition, Vector<ChessMove> validMoves) {
+
+
+    }
+
+    private Collection<ChessMove> kingPiece(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        return null;
+    }
+
+    private Collection<ChessMove> queenMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        return null;
+    }
+
+    private Collection<ChessMove> bishopMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        int tempx = piecePosition.getRow();
+        int tempy = piecePosition.getColumn();
+        Vector<ChessMove> validBishopMoves = new Vector<>();
+
+        while(true) {
+            tempx = tempx + 1;
+            tempy = tempy + 1;
+            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
+                if (board.getPiece(new ChessPosition(tempx, tempy )) != null) { // Second Check
+                    ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
+                    if (piece.getTeamColor() != tempPiece.getTeamColor()) {
+                        validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                        // System Check:
+                        System.out.printf("%d, %d\n", tempx, tempy);
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+
+        return validBishopMoves;
+        // FINISHING: throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> knightMoves(ChessPiece piece, ChessBoard board, ChessPosition myPosition) {
+        return null;
+    }
+
+    private Collection<ChessMove> pawnMoves(ChessPiece piece, ChessBoard board, ChessPosition myPosition) {
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
