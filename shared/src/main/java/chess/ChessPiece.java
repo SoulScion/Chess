@@ -88,7 +88,7 @@ public class ChessPiece {
         } else if (movingPiece.type == PieceType.ROOK) {
             return rookMoves(movingPiece, board, myPosition);
         } else if (movingPiece.type == PieceType.PAWN) {
-            return null;
+            return pawnMoves(movingPiece, board, myPosition);
         }
 
         throw new RuntimeException("Not implemented");
@@ -393,12 +393,12 @@ public class ChessPiece {
 
         // Check for Starting Position Special Move:
         if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
-            if (piecePosition.getRow() == 1) {
+            if (piecePosition.getRow() == 1 && board.getPiece(new ChessPosition(tempx + 1, tempy)) == null && board.getPiece(new ChessPosition(tempx + 2, tempy)) == null) {
                 validPawnMoveHelper(piecePosition.getRow() + 1, piecePosition.getColumn(), board, piece, piecePosition, validPawnMoves);
                 validPawnMoveHelper(piecePosition.getRow() + 2, piecePosition.getColumn(), board, piece, piecePosition, validPawnMoves);
             }
         } else if (piece.pieceColor == ChessGame.TeamColor.BLACK) {
-            if (piecePosition.getRow() == 7) {
+            if (piecePosition.getRow() == 7 && board.getPiece(new ChessPosition(tempx - 1, tempy)) == null && board.getPiece(new ChessPosition(tempx - 2, tempy)) == null) {
                 validPawnMoveHelper(piecePosition.getRow() - 1, piecePosition.getColumn(), board, piece, piecePosition, validPawnMoves);
                 validPawnMoveHelper(piecePosition.getRow() - 2, piecePosition.getColumn(), board, piece, piecePosition, validPawnMoves);
             }
@@ -429,7 +429,7 @@ public class ChessPiece {
         //Taking an Enemy Piece, Right Up:
         tempx = piecePosition.getRow() + 1;
         tempy = piecePosition.getColumn() + 1;
-        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+        if (board.getPiece(new ChessPosition(tempx, tempy)) == null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
             if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
                 if (piecePosition.getRow() == 8) {
                     // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
