@@ -1,7 +1,7 @@
 package chess;
 
 import java.util.Objects;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -74,7 +74,6 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> possibleMoveCollection = new Vector<ChessMove>();
         ChessPiece movingPiece = board.getPiece(myPosition);
 
         if (movingPiece.type == PieceType.KING) {
@@ -94,7 +93,7 @@ public class ChessPiece {
         throw new RuntimeException("Not implemented");
     }
 
-    private void validMove(int x, int y, ChessBoard board, ChessPiece pieceChecked, ChessPosition piecePosition, Vector<ChessMove> validMoves) {
+    private void validMove(int x, int y, ChessBoard board, ChessPiece pieceChecked, ChessPosition piecePosition, ArrayList<ChessMove> validMoves) {
         int tempx = x;
         int tempy = y;
         if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
@@ -104,7 +103,7 @@ public class ChessPiece {
         }
     }
 
-    private void validPawnMoveHelper(int x, int y, ChessBoard board, ChessPiece pieceChecked, ChessPosition piecePosition, Vector<ChessMove> validMoves) {
+    private void validPawnMoveHelper(int x, int y, ChessBoard board, ChessPiece pieceChecked, ChessPosition piecePosition, ArrayList<ChessMove> validMoves) {
         int tempx = x;
         int tempy = y;
         if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
@@ -115,8 +114,8 @@ public class ChessPiece {
     }
 
 
-    private Vector<ChessMove> kingMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
-        Vector<ChessMove> validKingMoves = new Vector<>();
+    private ArrayList<ChessMove> kingMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        ArrayList<ChessMove> validKingMoves = new ArrayList<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
 
@@ -132,16 +131,16 @@ public class ChessPiece {
         return validKingMoves;
     }
 
-    private Vector<ChessMove> queenMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
-        Vector<ChessMove> validQueenMoves = new Vector<>();
+    private ArrayList<ChessMove> queenMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        ArrayList<ChessMove> validQueenMoves = new ArrayList<>();
         validQueenMoves = bishopMoves(piece, board, piecePosition);
         validQueenMoves.addAll(rookMoves(piece, board, piecePosition));
 
         return validQueenMoves;
     }
 
-    private Vector<ChessMove> bishopMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
-        Vector<ChessMove> validBishopMoves = new Vector<>();
+    private ArrayList<ChessMove> bishopMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        ArrayList<ChessMove> validBishopMoves = new ArrayList<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
 
@@ -257,8 +256,8 @@ public class ChessPiece {
         // FINISHING: throw new RuntimeException("Not implemented");
     }
 
-    private Vector<ChessMove> knightMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
-        Vector<ChessMove> validKnightMoves = new Vector<>();
+    private ArrayList<ChessMove> knightMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        ArrayList<ChessMove> validKnightMoves = new ArrayList<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
 
@@ -274,8 +273,8 @@ public class ChessPiece {
         return validKnightMoves;
     }
 
-    private Vector<ChessMove> rookMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
-        Vector<ChessMove> validRookMoves = new Vector<>();
+    private ArrayList<ChessMove> rookMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        ArrayList<ChessMove> validRookMoves = new ArrayList<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
 
@@ -386,8 +385,8 @@ public class ChessPiece {
         return validRookMoves;
     }
 
-    private Vector<ChessMove> pawnMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
-        Vector<ChessMove> validPawnMoves = new Vector<>();
+    private ArrayList<ChessMove> pawnMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
+        ArrayList<ChessMove> validPawnMoves = new ArrayList<>();
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
 
