@@ -286,7 +286,7 @@ public class ChessPiece {
                     // if (piece.pieceColor != tempPiece.pieceColor) {
                     validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
                     // System Check:
-                    System.out.printf("%d, %d\n", tempx, tempy);
+                    // System.out.printf("%d, %d\n", tempx, tempy);
                     //} else {
                     //    break;
                     //}
@@ -314,7 +314,7 @@ public class ChessPiece {
                     // if (piece.pieceColor != tempPiece.pieceColor) {
                     validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
                     // System Check:
-                    System.out.printf("%d, %d\n", tempx, tempy);
+                    // System.out.printf("%d, %d\n", tempx, tempy);
                     //} else {
                     //    break;
                     //}
@@ -342,7 +342,7 @@ public class ChessPiece {
                     // if (piece.pieceColor != tempPiece.pieceColor) {
                     validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
                     // System Check:
-                    System.out.printf("%d, %d\n", tempx, tempy);
+                    // System.out.printf("%d, %d\n", tempx, tempy);
                     //} else {
                     //    break;
                     //}
