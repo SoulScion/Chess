@@ -87,7 +87,7 @@ public class ChessGame {
         ChessPosition whiteKingPosition = new ChessPosition(0,0);
         ChessPosition blackKingPosition = new ChessPosition(0,0);
 
-        if (currentTeamTurn == TeamColor.BLACK) { // We want to check the enemy team's pieces, so if it's black's turn, we need to check every white piece.
+        if (teamColor == TeamColor.BLACK) { // We want to check the enemy team's pieces, so if it's black's turn, we need to check every white piece.
             for (int row = 8; row > 0; row = row - 1) {
                 for (int col = 8; col > 0; col = col - 1) {
                     ChessPosition countingPosition = new ChessPosition(row,col);
@@ -120,7 +120,7 @@ public class ChessGame {
             }
         }
 
-        if (currentTeamTurn == TeamColor.WHITE) {
+        if (teamColor == TeamColor.WHITE) {
             for (int row = 0; row <= 8; row++) {
                 for (int col = 0; col <= 8; col++) {
                     ChessPosition countingPosition = new ChessPosition(row,col);
@@ -152,16 +152,9 @@ public class ChessGame {
                 }
             }
         }
+        return false;
 
-
-
-        // ChessPiece.pieceMoves(currentBoard, ;
-
-
-
-
-
-        throw new RuntimeException("Not implemented");
+        // FINISHED: throw new RuntimeException("Not implemented");
     }
 
 
