@@ -10,6 +10,9 @@ import java.util.Collection;
  */
 public class ChessGame {
 
+    private ChessBoard currentBoard;
+    private TeamColor currentTeamTurn;
+
     public ChessGame() {
 
     }
@@ -27,7 +30,10 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        currentTeamTurn = team;
+
+
+        //FINISHED: throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -47,6 +53,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 
+        // Make sure the king doesn't move into check. That will be done in Valid Moves or Make Move
 
 
         throw new RuntimeException("Not implemented");
@@ -69,6 +76,14 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        ChessBoard currentBoard = getBoard();
+
+        ChessPiece.pieceMoves();
+
+
+
+
+
         throw new RuntimeException("Not implemented");
     }
 
@@ -99,7 +114,10 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.currentBoard = board; // Not sure if I need to use "this."
+
+
+        //FINISHED: throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -108,6 +126,9 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return currentBoard;
+
+
+        //FINISHED: throw new RuntimeException("Not implemented");
     }
 }
