@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -79,15 +80,105 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessBoard currentBoard = getBoard();
 
-        ChessPiece.pieceMoves();
+        //ChessPosition countingPosition = new ChessPosition(0,0);
+        Boolean teamInCheck = false;
+        ChessBoard chessBoardCopy = new ChessBoard();
+        ChessPosition whiteKingPosition = new ChessPosition(0,0);
+        ChessPosition blackKingPosition = new ChessPosition(0,0);
+
+        if (currentTeamTurn == TeamColor.BLACK) { // We want to check the enemy team's pieces, so if it's black's turn, we need to check every white piece.
+            for (int row = 8; row > 0; row = row - 1) {
+                for (int col = 8; col > 0; col = col - 1) {
+                    ChessPosition countingPosition = new ChessPosition(row,col);
+                    if (currentBoard.getPiece(countingPosition) != null) {
+                        ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
+                        if (countingPiece.getPieceType() == ChessPiece.PieceType.KING && countingPiece.getTeamColor() == TeamColor.BLACK) {
+                            blackKingPosition = countingPosition;
+                        }
+                    }
+                }
+            }
+
+
+            for (int row = 0; row <= 8; row++) { // Stepping through each row
+                for (int col = 0; col <= 8; col++) {
+                    ChessPosition countingPosition = new ChessPosition(row,col);
+                    if (currentBoard.getPiece(countingPosition) != null) {
+                        ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
+                        if (countingPiece.getTeamColor() == TeamColor.BLACK) {
+                            continue;
+                        } else {
+                            if (countingPiece.getPieceType() != ChessPiece.PieceType.KING) {
+                                if (pieceMovesChecker(currentBoard, countingPosition, countingPiece, blackKingPosition) == true) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (currentTeamTurn == TeamColor.WHITE) {
+            for (int row = 0; row <= 8; row++) {
+                for (int col = 0; col <= 8; col++) {
+                    ChessPosition countingPosition = new ChessPosition(row,col);
+                    if (currentBoard.getPiece(countingPosition) != null) {
+                        ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
+                        if (countingPiece.getPieceType() == ChessPiece.PieceType.KING && countingPiece.getTeamColor() == TeamColor.WHITE) {
+                            whiteKingPosition = countingPosition;
+                        }
+                    }
+                }
+            }
+
+
+            for (int row = 8; row > 0; row = row - 1) { // Stepping through each row
+                for (int col = 8; col > 0; col = col - 1) {
+                    ChessPosition countingPosition = new ChessPosition(row,col);
+                    if (currentBoard.getPiece(countingPosition) != null) {
+                        ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
+                        if (countingPiece.getTeamColor() == TeamColor.WHITE) {
+                            continue;
+                        } else {
+                            if (countingPiece.getPieceType() != ChessPiece.PieceType.KING) {
+                                if (pieceMovesChecker(currentBoard, countingPosition, countingPiece, whiteKingPosition) == true) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        // ChessPiece.pieceMoves(currentBoard, ;
 
 
 
 
 
         throw new RuntimeException("Not implemented");
+    }
+
+
+    private boolean pieceMovesChecker(ChessBoard board, ChessPosition piecePosition, ChessPiece piece, ChessPosition allyKingPosition) {
+        Collection<ChessMove> listValidMoves = new ArrayList<>();
+        ChessPiece kingPiece = currentBoard.getPiece(allyKingPosition);
+        Boolean inCheck = false;
+
+        listValidMoves = piece.pieceMoves(board, piecePosition);
+        for (ChessMove position : listValidMoves) { // Not sure if this works.
+            if (allyKingPosition == position.getEndPosition()) { // Not sure if this works.
+                inCheck = true;
+            }
+        }
+
+
+        return inCheck;
     }
 
     /**
