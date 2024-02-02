@@ -70,7 +70,16 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPiece currentPiece = currentBoard.getPiece(move.getStartPosition());
+        ChessPosition currentPosition = move.getStartPosition();
+        //There's no reason to check if the piece can't move there because we are sending makeMove(...) a move that has already been validated by the "pieceMoves" method.
+        // Making the move:
+        currentPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
+        if(isInCheck(currentPiece.getTeamColor()) == true) {
+
+        }
+
+        //FINISHED: throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -182,7 +191,44 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+
+
         while (true) {
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                for (int row = 1; row <= 8; row++) { // Stepping through each row
+                    for (int col = 1; col <= 8; col++) {
+                        ChessPosition countingPosition = new ChessPosition(row,col);
+                        if (currentBoard.getPiece(countingPosition) != null) {
+                            ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
+                            if (countingPiece.getTeamColor() == TeamColor.BLACK) {
+                                continue;
+                            } else {
+                                Collection<ChessMove> listPieceMoves = new ArrayList<>();
+                                listPieceMoves = countingPiece.pieceMoves(currentBoard, countingPosition);
+                                for (ChessMove move : listPieceMoves) {
+                                    ChessBoard clonedBoard = new ChessBoard(currentBoard);
+                                    ChessBoard tempBoard = new ChessBoard(currentBoard);
+                                    makeMove(move);
+
+
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+
+
+
+            }
+
+
+
+            if (teamColor == ChessGame.TeamColor.BLACK) {
+
+            }
+
 
         }
 
@@ -192,10 +238,6 @@ public class ChessGame {
         //FINISHED: throw new RuntimeException("Not implemented");
     }
 
-    private void copyBoard(ChessBoard board) {
-
-
-    }
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having

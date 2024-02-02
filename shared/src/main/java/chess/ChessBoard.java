@@ -24,10 +24,32 @@ public class ChessBoard {
     }
     // ^ Possibly don't have to have a hashcode
 
+    public ChessBoard(ChessBoard originalBoard) {
+        this.chessBoard = new ChessPiece[8][8];
+        // Deep copy the pieces from the original board to the new board
+        for (int i = 0; i < chessBoard.length; i++) {
+            for (int j = 0; j < chessBoard[i].length; j++) {
+                ChessPiece originalPiece = originalBoard.chessBoard[i][j];
+                if (originalPiece != null) {
+                    this.chessBoard[i][j] = new ChessPiece(originalPiece);
+                }
+            }
+        }
+    }
+
     private ChessPiece [][] chessBoard;
     public ChessBoard() {
         chessBoard = new ChessPiece[8][8];
     }
+
+    // public ChessBoard(ChessBoard other) {
+    //    other = new ChessPiece[8][8];
+    //}
+
+    // @Override
+    // public ChessBoard clone() {
+    //    return new ChessBoard(this);
+    //}
 
     /**
      * Adds a chess piece to the chessboard
