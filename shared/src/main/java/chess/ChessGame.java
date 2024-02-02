@@ -88,8 +88,8 @@ public class ChessGame {
         ChessPosition blackKingPosition = new ChessPosition(0,0);
 
         if (teamColor == TeamColor.BLACK) { // We want to check the enemy team's pieces, so if it's black's turn, we need to check every white piece.
-            for (int row = 8; row > 0; row = row - 1) {
-                for (int col = 8; col > 0; col = col - 1) {
+            for (int row = 8; row > 1; row = row - 1) {
+                for (int col = 8; col > 1; col = col - 1) {
                     ChessPosition countingPosition = new ChessPosition(row,col);
                     if (currentBoard.getPiece(countingPosition) != null) {
                         ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
@@ -101,8 +101,8 @@ public class ChessGame {
             }
 
 
-            for (int row = 0; row <= 8; row++) { // Stepping through each row
-                for (int col = 0; col <= 8; col++) {
+            for (int row = 1; row <= 8; row++) { // Stepping through each row
+                for (int col = 1; col <= 8; col++) {
                     ChessPosition countingPosition = new ChessPosition(row,col);
                     if (currentBoard.getPiece(countingPosition) != null) {
                         ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
@@ -121,8 +121,8 @@ public class ChessGame {
         }
 
         if (teamColor == TeamColor.WHITE) {
-            for (int row = 0; row <= 8; row++) {
-                for (int col = 0; col <= 8; col++) {
+            for (int row = 1; row <= 8; row++) {
+                for (int col = 1; col <= 8; col++) {
                     ChessPosition countingPosition = new ChessPosition(row,col);
                     if (currentBoard.getPiece(countingPosition) != null) {
                         ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
@@ -134,8 +134,8 @@ public class ChessGame {
             }
 
 
-            for (int row = 8; row > 0; row = row - 1) { // Stepping through each row
-                for (int col = 8; col > 0; col = col - 1) {
+            for (int row = 8; row > 1; row = row - 1) { // Stepping through each row
+                for (int col = 8; col > 1; col = col - 1) {
                     ChessPosition countingPosition = new ChessPosition(row,col);
                     if (currentBoard.getPiece(countingPosition) != null) {
                         ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
@@ -165,7 +165,8 @@ public class ChessGame {
 
         listValidMoves = piece.pieceMoves(board, piecePosition);
         for (ChessMove position : listValidMoves) { // Not sure if this works.
-            if (allyKingPosition == position.getEndPosition()) { // Not sure if this works.
+            // System.out.printf("%d, %d, %d, %d\n", allyKingPosition.getRow(), allyKingPosition.getColumn(), position.getEndPosition().getRow(), position.getEndPosition().getColumn());
+            if (allyKingPosition.getRow() == position.getEndPosition().getRow() && allyKingPosition.getColumn() == position.getEndPosition().getColumn()) { // Not sure if this works.
                 inCheck = true;
             }
         }
@@ -181,7 +182,19 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        while (true) {
+
+        }
+
+
+
+
+        //FINISHED: throw new RuntimeException("Not implemented");
+    }
+
+    private void copyBoard(ChessBoard board) {
+
+
     }
 
     /**
