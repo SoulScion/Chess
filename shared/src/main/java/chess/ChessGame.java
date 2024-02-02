@@ -74,9 +74,12 @@ public class ChessGame {
         ChessPosition currentPosition = move.getStartPosition();
         //There's no reason to check if the piece can't move there because we are sending makeMove(...) a move that has already been validated by the "pieceMoves" method.
         // Making the move:
-        currentPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
-        if(isInCheck(currentPiece.getTeamColor()) == true) {
 
+        // currentBoard[move.getEndPosition().getRow()][move.getEndPosition().getColumn())] = currentPiece;
+
+        currentPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn()); // Doesn't work as a way to add a piece.
+        if(currentPiece.getTeamColor() != getTeamTurn() || isInCheck(currentPiece.getTeamColor()) == true) {
+            throw new InvalidMoveException();
         }
 
         //FINISHED: throw new RuntimeException("Not implemented");
@@ -207,20 +210,19 @@ public class ChessGame {
                                 listPieceMoves = countingPiece.pieceMoves(currentBoard, countingPosition);
                                 for (ChessMove move : listPieceMoves) {
                                     ChessBoard clonedBoard = new ChessBoard(currentBoard);
-                                    ChessBoard tempBoard = new ChessBoard(currentBoard);
-                                    makeMove(move);
-
-
+                                    try {
+                                        makeMove(move);
+                                    } catch (InvalidMoveException e) {
+                                        currentBoard = new ChessBoard(clonedBoard);
+                                        continue;
+                                    }
+                                    return false;
                                 }
-
-
                             }
                         }
                     }
                 }
-
-
-
+                return true;
             }
 
 
