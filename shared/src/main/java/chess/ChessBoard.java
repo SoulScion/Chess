@@ -27,11 +27,11 @@ public class ChessBoard {
     public ChessBoard(ChessBoard originalBoard) {
         this.chessBoard = new ChessPiece[8][8];
         // Deep copy the pieces from the original board to the new board
-        for (int i = 0; i < chessBoard.length; i++) {
-            for (int j = 0; j < chessBoard[i].length; j++) {
-                ChessPiece originalPiece = originalBoard.chessBoard[i][j];
+        for (int row= 0; row < chessBoard.length; row++) {
+            for (int col = 0; col < chessBoard[row].length; col++) {
+                ChessPiece originalPiece = originalBoard.chessBoard[row][col];
                 if (originalPiece != null) {
-                    this.chessBoard[i][j] = new ChessPiece(originalPiece);
+                    this.chessBoard[row][col] = new ChessPiece(originalPiece);
                 }
             }
         }
@@ -59,9 +59,20 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
 
-        chessBoard[position.getRow()-1][position.getColumn()-1] = piece;
+        if (getPiece(position) != null) {
+            // call the remove piece private function
+            // if we are trying to add to a spot where a piece already exists, in your terms, that means we want to delete it.
+            // because we would never want to add a piece to a spot that is already occupied, unless it was some sort of code for something else.
+            removePiece(position);
+        } else {
+            chessBoard[position.getRow()-1][position.getColumn()-1] = piece;
+        }
 
         // FINISHED: throw new RuntimeException("Not implemented");
+    }
+
+    private void removePiece(ChessPosition removingPosition) {
+        chessBoard[removingPosition.getRow()-1][removingPosition.getColumn()-1] = null;
     }
 
     /**

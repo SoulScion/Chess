@@ -77,7 +77,10 @@ public class ChessGame {
 
         // currentBoard[move.getEndPosition().getRow()][move.getEndPosition().getColumn())] = currentPiece;
 
-        currentPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn()); // Doesn't work as a way to add a piece.
+        // currentPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn()); // Doesn't work as a way to add a piece.
+
+        currentBoard.addPiece(move.getEndPosition(), currentPiece);
+        currentBoard.addPiece(move.getStartPosition(), currentPiece); // This should be the deleting version.
         if(currentPiece.getTeamColor() != getTeamTurn() || isInCheck(currentPiece.getTeamColor()) == true) {
             throw new InvalidMoveException();
         }
@@ -107,6 +110,7 @@ public class ChessGame {
                         ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
                         if (countingPiece.getPieceType() == ChessPiece.PieceType.KING && countingPiece.getTeamColor() == TeamColor.BLACK) {
                             blackKingPosition = countingPosition;
+                            break;
                         }
                     }
                 }
@@ -140,6 +144,7 @@ public class ChessGame {
                         ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
                         if (countingPiece.getPieceType() == ChessPiece.PieceType.KING && countingPiece.getTeamColor() == TeamColor.WHITE) {
                             whiteKingPosition = countingPosition;
+                            break;
                         }
                     }
                 }
@@ -180,6 +185,7 @@ public class ChessGame {
             // System.out.printf("%d, %d, %d, %d\n", allyKingPosition.getRow(), allyKingPosition.getColumn(), position.getEndPosition().getRow(), position.getEndPosition().getColumn());
             if (allyKingPosition.getRow() == position.getEndPosition().getRow() && allyKingPosition.getColumn() == position.getEndPosition().getColumn()) { // Not sure if this works.
                 inCheck = true;
+                break;
             }
         }
 
