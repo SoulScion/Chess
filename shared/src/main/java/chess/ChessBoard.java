@@ -59,7 +59,7 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
 
-        if (getPiece(position) != null) {
+        if (getPiece(position) != null && getPiece(position).getPieceType() == piece.getPieceType() && getPiece(position).getTeamColor() == piece.getTeamColor()) {
             // call the remove piece private function
             // if we are trying to add to a spot where a piece already exists, in your terms, that means we want to delete it.
             // because we would never want to add a piece to a spot that is already occupied, unless it was some sort of code for something else.
