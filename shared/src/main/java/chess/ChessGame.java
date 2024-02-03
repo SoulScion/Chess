@@ -329,14 +329,19 @@ public class ChessGame {
                 for (int row = 1; row <= 8; row++) { // Stepping through each row
                     for (int col = 1; col <= 8; col++) {
                         ChessPosition countingPosition = new ChessPosition(row,col);
-                        ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
+                        if (currentBoard.getPiece(countingPosition) != null) {
+                            ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
+                            if (countingPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                                continue;
+                            }
+                        }
 
-                        if (countingPiece.getTeamColor() == ChessGame.TeamColor.BLACK || validMoves(countingPosition) == null || validMoves(countingPosition).isEmpty()) {
+                        if (validMoves(countingPosition) == null || validMoves(countingPosition).isEmpty()) {
                             continue;
                         } else {
                             //ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
                             //if (countingPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-                                //continue;
+                            //    continue;
                             //} else
                             if (validMoves(countingPosition) != null){
                                 return false;
@@ -382,14 +387,21 @@ public class ChessGame {
                 for (int row = 8; row > 1; row = row - 1) { // Stepping through each row
                     for (int col = 8; col > 1; col = col - 1) {
                         ChessPosition countingPosition = new ChessPosition(row, col);
+                        if (currentBoard.getPiece(countingPosition) != null) {
+                            ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
+                            if (countingPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                                continue;
+                            }
+                        }
 
                         if (validMoves(countingPosition) == null || validMoves(countingPosition).isEmpty()) {
                             continue;
                         } else {
-                            ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
-                            if (countingPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                                continue;
-                            } else if (validMoves(countingPosition) != null) {
+                            //ChessPiece countingPiece = currentBoard.getPiece(countingPosition);
+                            //if (countingPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                            //    continue;
+                            //} else
+                            if (validMoves(countingPosition) != null) {
                                 return false;
                             }
                         }
@@ -401,7 +413,7 @@ public class ChessGame {
             }
         }
 
-        return true;
+        return false;
         //FINISHED: throw new RuntimeException("Not implemented");
     }
 
