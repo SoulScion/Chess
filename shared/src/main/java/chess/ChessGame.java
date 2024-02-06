@@ -113,6 +113,55 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        Collection<ChessMove> listPieceMoves = new ArrayList<>();
+        boolean notInCheck = false;
+
+        if (move.getEndPosition().getRow() <= 8 && move.getEndPosition().getColumn() <= 8 && move.getEndPosition().getRow() > 0 && move.getEndPosition().getColumn() > 0) {
+            listPieceMoves = validMoves(move.getStartPosition());
+            for (ChessMove test : listPieceMoves) {
+                if (test.getEndPosition() == move.getEndPosition()) {
+                    notInCheck = true;
+                }
+            }
+            if (notInCheck == true) {
+                ChessPiece checkingPiece = currentBoard.getPiece(move.getStartPosition());
+
+                if (checkingPiece.getTeamColor() == getTeamTurn()) {
+
+                    if (currentBoard.getPiece(move.getEndPosition()) != null) {
+                        ChessPiece enemyPiece = currentBoard.getPiece(move.getEndPosition());
+                        if (checkingPiece.getTeamColor() != enemyPiece.getTeamColor()) {
+                            if (checkingPiece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
+                                ChessPiece promotedPiece = new ChessPiece(checkingPiece.getTeamColor(), move.getPromotionPiece());
+                                currentBoard.addPiece(move.getEndPosition(), enemyPiece); // removes the enemy piece that was there
+                                currentBoard.addPiece(move.getEndPosition(), promotedPiece);
+                            } else {
+                                currentBoard.addPiece(move.getEndPosition(), enemyPiece); // removes the enemy piece that was there
+                                currentBoard.addPiece(move.getEndPosition(), checkingPiece);
+                            }
+
+                        } else {
+                            throw new InvalidMoveException();
+                        }
+                    } else {
+                        if (checkingPiece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
+                            ChessPiece promotedPiece = new ChessPiece(checkingPiece.getTeamColor(), move.getPromotionPiece());
+                            currentBoard.addPiece(move.getEndPosition(), promotedPiece);
+                            currentBoard.addPiece(move.getStartPosition(), checkingPiece);
+                        } else {
+                            currentBoard.addPiece(move.getEndPosition(), checkingPiece);
+                            currentBoard.addPiece(move.getStartPosition(), checkingPiece); //This removes the piece at the beginning position
+                        }
+                    }
+                } else {
+                    throw new InvalidMoveException();
+                }
+            } else {
+                throw new InvalidMoveException();
+            }
+        } else {
+            throw new InvalidMoveException();
+        }
 
         /**
         ChessPiece currentPiece = currentBoard.getPiece(move.getStartPosition());
