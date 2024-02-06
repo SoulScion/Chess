@@ -447,31 +447,35 @@ public class ChessPiece {
         //Taking an Enemy Piece, Right Up Or Right Down:
         tempx = piecePosition.getRow() + 1;
         tempy = piecePosition.getColumn() + 1;
-        if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-            if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                if (piecePosition.getRow() + 1 == 8) {
-                    // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
-                } else {
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+        if (piecePosition.getColumn() <= 7) {
+            if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+                if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
+                    if (piecePosition.getRow() + 1 == 8) {
+                        // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
+                    } else {
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    }
                 }
             }
         }
         tempx = piecePosition.getRow() - 1;
         tempy = piecePosition.getColumn() - 1;
-        if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-            if (piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                if (piecePosition.getRow() - 1 == 1) {
-                    // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
-                }  else {
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+        if (piecePosition.getColumn() > 1) {
+            if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+                if (piece.pieceColor == ChessGame.TeamColor.BLACK) {
+                    if (piecePosition.getRow() - 1 == 1) {
+                        // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
+                    } else {
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    }
                 }
             }
         }
@@ -480,31 +484,35 @@ public class ChessPiece {
         //Taking an Enemy Piece, Left Up:
         tempx = piecePosition.getRow() + 1;
         tempy = piecePosition.getColumn() - 1;
-        if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-            if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                if (piecePosition.getRow() + 1 == 8) {
-                    // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
-                } else {
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+        if (piecePosition.getColumn() > 1) {
+            if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+                if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
+                    if (piecePosition.getRow() + 1 == 8) {
+                        // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
+                    } else {
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    }
                 }
             }
         }
         tempx = piecePosition.getRow() - 1;
         tempy = piecePosition.getColumn() + 1;
-        if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-            if (piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                if (piecePosition.getRow() - 1 == 1) {
-                    // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
-                } else {
-                    validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+        if (piecePosition.getColumn() <= 7) {
+            if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+                if (piece.pieceColor == ChessGame.TeamColor.BLACK) {
+                    if (piecePosition.getRow() - 1 == 1) {
+                        // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
+                    } else {
+                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                    }
                 }
             }
         }

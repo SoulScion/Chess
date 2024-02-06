@@ -115,11 +115,12 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> listPieceMoves = new ArrayList<>();
         boolean notInCheck = false;
+        ChessPiece teamTurnCheckPiece = currentBoard.getPiece(move.getStartPosition());
 
         if (move.getEndPosition().getRow() <= 8 && move.getEndPosition().getColumn() <= 8 && move.getEndPosition().getRow() > 0 && move.getEndPosition().getColumn() > 0) {
             listPieceMoves = validMoves(move.getStartPosition());
             for (ChessMove test : listPieceMoves) {
-                if (test.getEndPosition() == move.getEndPosition()) {
+                if (test.getEndPosition().equals(move.getEndPosition())) {
                     notInCheck = true;
                 }
             }
@@ -153,6 +154,7 @@ public class ChessGame {
                             currentBoard.addPiece(move.getStartPosition(), checkingPiece); //This removes the piece at the beginning position
                         }
                     }
+
                 } else {
                     throw new InvalidMoveException();
                 }
@@ -161,6 +163,12 @@ public class ChessGame {
             }
         } else {
             throw new InvalidMoveException();
+        }
+
+        if (teamTurnCheckPiece.getTeamColor() == ChessGame.TeamColor.WHITE && getTeamTurn() == ChessGame.TeamColor.WHITE) {
+            setTeamTurn(ChessGame.TeamColor.BLACK);
+        } else if (teamTurnCheckPiece.getTeamColor() == ChessGame.TeamColor.BLACK && getTeamTurn() == ChessGame.TeamColor.BLACK) {
+            setTeamTurn(ChessGame.TeamColor.WHITE);
         }
 
         /**
@@ -291,7 +299,7 @@ public class ChessGame {
 
     private boolean pieceMovesChecker(ChessBoard board, ChessPosition piecePosition, ChessPiece piece, ChessPosition allyKingPosition) {
         Collection<ChessMove> listValidMoves = new ArrayList<>();
-        ChessPiece kingPiece = currentBoard.getPiece(allyKingPosition);
+        // ChessPiece kingPiece = currentBoard.getPiece(allyKingPosition);
         Boolean inCheck = false;
 
         listValidMoves = piece.pieceMoves(board, piecePosition);
