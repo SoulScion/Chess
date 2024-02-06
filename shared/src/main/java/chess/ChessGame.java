@@ -134,10 +134,11 @@ public class ChessGame {
                         if (checkingPiece.getTeamColor() != enemyPiece.getTeamColor()) {
                             if (checkingPiece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
                                 ChessPiece promotedPiece = new ChessPiece(checkingPiece.getTeamColor(), move.getPromotionPiece());
+                                currentBoard.addPiece(move.getStartPosition(), checkingPiece);
                                 currentBoard.addPiece(move.getEndPosition(), enemyPiece); // removes the enemy piece that was there
                                 currentBoard.addPiece(move.getEndPosition(), promotedPiece);
                             } else {
-                                currentBoard.addPiece(move.getEndPosition(), enemyPiece); // removes the enemy piece that was there
+                                currentBoard.addPiece(move.getStartPosition(), checkingPiece); // removes the enemy piece that was there
                                 currentBoard.addPiece(move.getEndPosition(), checkingPiece);
                             }
 
