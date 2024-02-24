@@ -9,7 +9,7 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 
 public class MemoryAuthDAO {
-    private Collection<AuthData> allAuthData = new ArrayList();
+    final private Collection<AuthData> allAuthData = new ArrayList<>();
     private String privateAuthToken;
     private String privateUsername;
 
@@ -23,10 +23,10 @@ public class MemoryAuthDAO {
 
     public AuthData createAuthData(String username) {
 
-        SecureRandom random = new SecureRandom();
-        byte bytes[] = new byte[20];
-        random.nextBytes(bytes);
-        String authToken = Arrays.toString(bytes); // Creating the authToken, used to authorize.
+        SecureRandom randomCode = new SecureRandom();
+        byte numbers[] = new byte[20];
+        randomCode.nextBytes(numbers);
+        String authToken = Arrays.toString(numbers); // Creating the authToken, used to authorize.
 
         AuthData newAuth = new AuthData(authToken, username); // Creating a full AuthData Object.
         allAuthData.add(newAuth); // Adding the new authentication to the list of all authentications.
