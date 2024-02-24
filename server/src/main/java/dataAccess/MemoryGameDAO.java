@@ -7,19 +7,19 @@ import model.GameData;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MemoryGameDAO {
+public class MemoryGameDAO implements GameDAO {
 
-    final private Collection<GameData> allGameData = new ArrayList<>();
+    private Collection<GameData> allGameData = new ArrayList<>();
 
     private int gameID = 5;
 
-    GameData createGameData(String gameName) {
+    public GameData createGameData(String gameName) {
         GameData newGame = new GameData(gameID, null, null, gameName, new ChessGame());
         allGameData.add(newGame);
         return newGame;
     }
 
-    void updateGameData(int givenGameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) {
+    public void updateGameData(int givenGameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) {
         for (GameData currentGame : allGameData) {
             if (currentGame.gameID() == (givenGameID)) {
                 currentGame = new GameData(givenGameID, whiteUsername, blackUsername, gameName, new ChessGame());
@@ -28,11 +28,11 @@ public class MemoryGameDAO {
 
     }
 
-    Collection<GameData> listGameData() {
+    public Collection<GameData> listGameData() {
         return allGameData;
     }
 
-    GameData getGameData(String gameName) {
+    public GameData getGameData(String gameName) {
         for (GameData currentGame : allGameData) {
             if (currentGame.gameName().equals(gameName)) {
                 return currentGame;
@@ -41,15 +41,7 @@ public class MemoryGameDAO {
         return null;
     }
 
-    void deleteGameData(String gameName) {
-        for (GameData currentGame : allGameData) {
-            if (currentGame.gameName().equals(gameName)) {
-                allGameData.remove(currentGame);
-            }
-        }
-    }
-
-    void deleteAllAuthData() {
+    public void deleteAllGameData() {
         for (GameData currentGame : allGameData) {
             allGameData.remove(currentGame);
         }

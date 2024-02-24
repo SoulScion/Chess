@@ -5,14 +5,9 @@ import model.UserData;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MemoryUserDAO {
+public class MemoryUserDAO implements UserDAO {
 
-    final private Collection<UserData> allUserData = new ArrayList<>();
-    private String privateAuthToken;
-    private String privateUsername;
-
-    private String privateEmail;
-
+    private Collection<UserData> allUserData = new ArrayList<>();
 
     public UserData createUserData(String username, String password, String email) {
         UserData newUser = new UserData(username, password, email);
@@ -35,7 +30,7 @@ public class MemoryUserDAO {
         return null;
     }
 
-    void deleteAllUserData() {
+    public void deleteAllUserData() {
         for (UserData currentUserData : allUserData) {
             allUserData.remove(currentUserData);
         }
