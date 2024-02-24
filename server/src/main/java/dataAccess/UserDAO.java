@@ -1,17 +1,15 @@
 package dataAccess;
 
-import model.AuthData;
+import model.UserData;
 
 import java.util.Collection;
 
 public interface UserDAO {
-    AuthData createUserData(String username, String password, String email) throws DataAccessException;
+    UserData createUserData(String username, String password, String email) throws DataAccessException;
 
-    Collection<AuthData> listUserData() throws DataAccessException;
+    Collection<UserData> listUserData() throws DataAccessException;
 
-    AuthData getUserData(String username) throws DataAccessException;
-
-    void deleteUserData(String username) throws DataAccessException;
+    UserData getUserData(String username) throws DataAccessException;
 
     void deleteAllUserData() throws DataAccessException;
 

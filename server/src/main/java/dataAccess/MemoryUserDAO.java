@@ -16,14 +16,8 @@ public class MemoryUserDAO {
 
 
     public UserData createUserData(String username, String password, String email) {
-        UserData newUser = null;
-
-        if (getUserData(username) == null) {
-            newUser = new UserData(username, password, email);
-            allUserData.add(newUser);
-        } else {
-            // throw DataAccessException("User already exists");
-        }
+        UserData newUser = new UserData(username, password, email);
+        allUserData.add(newUser);
 
         return newUser;
 
@@ -42,17 +36,9 @@ public class MemoryUserDAO {
         return null;
     }
 
-    void deleteUserData(String username) {
-        for (UserData currentUserData : allUserData) {
-            if (currentUserData.username().equals(username)) {
-                currentUserData = new UserData(null, null, null);
-            }
-        }
-    }
-
     void deleteAllUserData() {
         for (UserData currentUserData : allUserData) {
-            currentUserData = new UserData(null, null, null);
+            allUserData.remove(currentUserData);
         }
     }
 

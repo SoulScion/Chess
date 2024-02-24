@@ -1,15 +1,18 @@
 package dataAccess;
 
-import model.AuthData;
+import chess.ChessGame;
+import model.GameData;
 
 import java.util.Collection;
 
 public interface GameDAO {
-    AuthData createGameData(String username) throws DataAccessException;
+    GameData createGameData(String username) throws DataAccessException;
 
-    Collection<AuthData> listGameData() throws DataAccessException;
+    void updateGameData(int givenGameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) throws DataAccessException;
 
-    AuthData getGameData(int gameID) throws DataAccessException;
+    Collection<GameData> listGameData() throws DataAccessException;
+
+    GameData getGameData(int gameID) throws DataAccessException;
 
     void deleteGameData(int gameID) throws DataAccessException;
 
