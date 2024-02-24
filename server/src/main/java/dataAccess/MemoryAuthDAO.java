@@ -50,14 +50,16 @@ public class MemoryAuthDAO {
     void deleteAuthData(String authToken) {
         for (AuthData currentAuthData : allAuthData) {
             if (currentAuthData.authToken().equals(authToken)) {
-                currentAuthData.authToken() = null;
+                currentAuthData = new AuthData(null, null);
             }
         }
-        return null;
+        // Send an error here if authToken doesn't exist.
     }
 
     void deleteAllAuthData() {
-
+        for (AuthData currentAuthData : allAuthData) {
+            currentAuthData = new AuthData(null, null);
+        }
     }
 
 
