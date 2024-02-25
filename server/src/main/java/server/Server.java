@@ -2,11 +2,13 @@ package server;
 
 import com.google.gson.Gson;
 import model.UserData;
+import request_result.LogoutRequest;
 import spark.*;
 import dataAccess.*;
 import service.*;
-import request_result.RegisterResponse;
 import request_result.LoginRequest;
+
+import java.io.Reader;
 
 
 public class Server {
@@ -22,8 +24,10 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
-        Spark.post("/session", this::loginMethod);
         Spark.post("/user", this::registerMethod);
+        Spark.post("/session", this::loginMethod);
+        Spark.post("/session", this::logoutMethod);
+
 
         // Register your endpoints and handle exceptions here.
 
@@ -56,6 +60,15 @@ public class Server {
         LoginRequest dataUser = new Gson().fromJson(request.body(), LoginRequest.class);
         LoginService service = new LoginService();
         var regResponse = service.login(memoryUserDAO, dataUser, memoryAuthDAO);
+        return new Gson().toJson(regResponse);
+
+    }
+
+    // FIXME: FIND A SOLUTION ON HOW TO GRAB THE HEADER FOR LOGOUT.
+    public Object logoutMethod(Request request, Response response) throws DataAccessException {
+        LogoutRequest auth = new Gson().fromJson(request.headers(), LogoutRequest.class);
+        LogoutService service = new LogoutService();
+        var regResponse = service.logout(auth, memoryAuthDAO);
         return new Gson().toJson(regResponse);
 
     }

@@ -4,7 +4,6 @@ import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.UserDAO;
 import model.AuthData;
-import model.UserData;
 import request_result.FailureResponse;
 import request_result.LoginRequest;
 import request_result.RegisterResponse;
@@ -15,7 +14,7 @@ public class LoginService {
     public Object login(UserDAO userDAO, LoginRequest data, AuthDAO auth) throws DataAccessException {
         try {
             if (!Objects.equals(userDAO.getUserData(data.username()).password(), data.password())) {
-                return new FailureResponse("Error: unuauthorized");
+                return new FailureResponse("Error: unauthorized");
             }
 
             AuthData authData = auth.createAuthData(data.username());
