@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonReader;
 import model.GameData;
 import model.UserData;
+import request_result.CreateGameResponse;
 import request_result.ListGamesRequest;
 import request_result.LogoutRequest;
 import spark.*;
@@ -100,11 +101,24 @@ public class Server {
         String header = request.headers("authorization");
 
         GameData dataGame = new Gson().fromJson(request.body(), GameData.class);
-        ListGamesService service = new ListGamesService();
-        var regResponse = service.listGames(memoryGameDAO, dataGame, header, memoryAuthDAO);
+        CreateGameService service = new CreateGameService();
+        var regResponse = service.createGame(memoryGameDAO, dataGame, header, memoryAuthDAO);
         return new Gson().toJson(regResponse);
 
     }
+
+    public Object joinGameMethod(Request request, Response response) throws DataAccessException {
+
+        String header = request.headers("authorization");
+
+        GameData dataGame = new Gson().fromJson(request.body(), GameData.class);
+        CreateGameService service = new CreateGameService();
+        var regResponse = service.createGame(memoryGameDAO, dataGame, header, memoryAuthDAO);
+        return new Gson().toJson(regResponse);
+
+    }
+
+
 
 
 
