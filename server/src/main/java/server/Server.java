@@ -5,13 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonReader;
 import model.GameData;
 import model.UserData;
-import request_result.CreateGameResponse;
-import request_result.ListGamesRequest;
-import request_result.LogoutRequest;
+import request_result.*;
 import spark.*;
 import dataAccess.*;
 import service.*;
-import request_result.LoginRequest;
 
 import java.io.Reader;
 import java.util.Set;
@@ -111,7 +108,7 @@ public class Server {
 
         String header = request.headers("authorization");
 
-        GameData dataGame = new Gson().fromJson(request.body(), GameData.class);
+        JoinGameRequest joinData = new Gson().fromJson(request.body(), GameData.class);
         CreateGameService service = new CreateGameService();
         var regResponse = service.createGame(memoryGameDAO, dataGame, header, memoryAuthDAO);
         return new Gson().toJson(regResponse);
