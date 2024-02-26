@@ -12,13 +12,13 @@ import java.util.Objects;
 
 public class LogoutService {
 
-    public Object logout(LogoutRequest data, AuthDAO auth) throws DataAccessException {
+    public Object logout(String authToken, AuthDAO auth) throws DataAccessException {
         try {
-            if (auth.getAuthData(data.authToken()) == null) {
+            if (auth.getAuthData(authToken) == null) {
                 return new FailureResponse("Error: unauthorized");
             }
 
-            auth.deleteAuthData(data.authToken());
+            auth.deleteAuthData(authToken);
             return "";
         } catch (DataAccessException error) {
             return new RegisterResponse("Error", "Error");
