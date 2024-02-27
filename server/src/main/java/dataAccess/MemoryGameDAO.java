@@ -1,7 +1,6 @@
 package dataAccess;
 
 import chess.ChessGame;
-import model.AuthData;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -9,7 +8,7 @@ import java.util.Collection;
 
 public class MemoryGameDAO implements GameDAO {
 
-    private Collection<GameData> allGameData = new ArrayList<>();
+    private ArrayList<GameData> allGameData = new ArrayList<>();
 
     private int gameID = 5;
 
@@ -21,9 +20,9 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     public void updateGameData(int givenGameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) {
-        for (GameData currentGame : allGameData) {
-            if (currentGame.gameID() == (givenGameID)) {
-                currentGame = new GameData(givenGameID, whiteUsername, blackUsername, gameName, new ChessGame());
+        for (int i = 0; i < allGameData.size(); i++) {
+            if (allGameData.get(i).gameID() == givenGameID) {
+                allGameData.set(i, new GameData(givenGameID, whiteUsername, blackUsername, gameName, new ChessGame()));
             }
         }
 
@@ -33,9 +32,9 @@ public class MemoryGameDAO implements GameDAO {
         return allGameData;
     }
 
-    public GameData getGameData(String gameName) {
+    public GameData getGameData(int gameID) {
         for (GameData currentGame : allGameData) {
-            if (currentGame.gameName().equals(gameName)) {
+            if (currentGame.gameID() == (gameID)) {
                 return currentGame;
             }
         }
@@ -43,8 +42,6 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     public void deleteAllGameData() {
-        for (GameData currentGame : allGameData) {
-            allGameData.remove(currentGame);
-        }
+        allGameData.clear();
     }
 }

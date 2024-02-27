@@ -22,10 +22,6 @@ public class MemoryAuthDAO implements AuthDAO {
         return newAuth;
     }
 
-    public Collection<AuthData> listAuthData() {
-        return allAuthData;
-    }
-
     public AuthData getAuthData(String authToken) {
         for (AuthData currentAuthData : allAuthData) {
             if (currentAuthData.authToken().equals(authToken)) {
@@ -45,9 +41,7 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     public void deleteAllAuthData() {
-        for (AuthData currentAuthData : allAuthData) {
-            allAuthData.remove(currentAuthData);
-        }
+        allAuthData.clear();
     }
 
 

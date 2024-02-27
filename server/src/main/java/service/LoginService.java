@@ -13,7 +13,7 @@ import java.util.Objects;
 public class LoginService {
     public Object login(UserDAO userDAO, LoginRequest data, AuthDAO auth) throws DataAccessException {
         try {
-            if (!Objects.equals(userDAO.getUserData(data.username()).password(), data.password())) {
+            if (userDAO.listUserData().isEmpty() || userDAO.getUserData(data.username()) == null || !Objects.equals(userDAO.getUserData(data.username()).password(), data.password())) {
                 return new FailureResponse("Error: unauthorized");
             }
 

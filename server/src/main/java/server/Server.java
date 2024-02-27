@@ -11,6 +11,7 @@ import dataAccess.*;
 import service.*;
 
 import java.io.Reader;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -32,6 +33,8 @@ public class Server {
         Spark.delete("/session", this::logoutMethod);
         Spark.get("/game", this::listGamesMethod);
         Spark.post("/game", this::createGameMethod);
+        Spark.put("/game", this::joinGameMethod);
+        Spark.delete("/db", this::clearAllMethod);
 
 
         // Register your endpoints and handle exceptions here.
@@ -51,6 +54,19 @@ public class Server {
         RegisterService service = new RegisterService();
 
         var regResponse = service.register(memoryUserDAO, dataUser, memoryAuthDAO);
+        // register.instanceof()
+
+        if (regResponse instanceof FailureResponse) {
+            if (Objects.equals(((FailureResponse) regResponse).message(), "Error: bad request")) {
+                response.status(400);
+            } else {
+                response.status(403);
+            }
+        } else {
+            response.status(200);
+        }
+
+
         return new Gson().toJson(regResponse);
 
     }
@@ -65,11 +81,20 @@ public class Server {
         LoginRequest dataUser = new Gson().fromJson(request.body(), LoginRequest.class);
         LoginService service = new LoginService();
         var regResponse = service.login(memoryUserDAO, dataUser, memoryAuthDAO);
+
+        if (regResponse instanceof FailureResponse) {
+            if (Objects.equals(((FailureResponse) regResponse).message(), "Error: unauthorized")) {
+                response.status(401);
+            }
+        } else {
+            response.status(200);
+        }
+
+
         return new Gson().toJson(regResponse);
 
     }
 
-    // FIXME: FIND A SOLUTION ON HOW TO GRAB THE HEADER FOR LOGOUT.
     public Object logoutMethod(Request request, Response response) throws DataAccessException {
 
         Set<String> headers = request.headers();
@@ -78,6 +103,16 @@ public class Server {
         // LogoutRequest auth = new Gson().fromJson(request.headers("authorization"), LogoutRequest.class);
         LogoutService service = new LogoutService();
         var regResponse = service.logout(header, memoryAuthDAO);
+
+        if (regResponse instanceof FailureResponse) {
+            if (Objects.equals(((FailureResponse) regResponse).message(), "Error: unauthorized")) {
+                response.status(401);
+            }
+        } else {
+            response.status(200);
+        }
+
+
         return new Gson().toJson(regResponse);
 
     }
@@ -89,6 +124,17 @@ public class Server {
         //GameData dataGame = new Gson().fromJson(request.body(), GameData.class);
         ListGamesService service = new ListGamesService();
         var regResponse = service.listGames(memoryGameDAO, header, memoryAuthDAO);
+
+        if (regResponse instanceof FailureResponse) {
+            if (Objects.equals(((FailureResponse) regResponse).message(), "Error: unauthorized")) {
+                response.status(401);
+            }
+        } else {
+            response.status(200);
+        }
+
+
+
         return new Gson().toJson(regResponse);
 
     }
@@ -100,6 +146,18 @@ public class Server {
         GameData dataGame = new Gson().fromJson(request.body(), GameData.class);
         CreateGameService service = new CreateGameService();
         var regResponse = service.createGame(memoryGameDAO, dataGame, header, memoryAuthDAO);
+
+        if (regResponse instanceof FailureResponse) {
+            if (Objects.equals(((FailureResponse) regResponse).message(), "Error: bad request")) {
+                response.status(400);
+            } else {
+                response.status(401);
+            }
+        } else {
+            response.status(200);
+        }
+
+
         return new Gson().toJson(regResponse);
 
     }
@@ -108,9 +166,35 @@ public class Server {
 
         String header = request.headers("authorization");
 
-        JoinGameRequest joinData = new Gson().fromJson(request.body(), GameData.class);
-        CreateGameService service = new CreateGameService();
-        var regResponse = service.createGame(memoryGameDAO, dataGame, header, memoryAuthDAO);
+        JoinGameRequest joinData = new Gson().fromJson(request.body(), JoinGameRequest.class);
+        JoinGameService service = new JoinGameService();
+        var regResponse = service.joinGame(memoryGameDAO, joinData, header, memoryAuthDAO);
+
+        if (regResponse instanceof FailureResponse) {
+            if (Objects.equals(((FailureResponse) regResponse).message(), "Error: bad request")) {
+                response.status(400);
+            } else if (Objects.equals(((FailureResponse) regResponse).message(), "Error: unauthorized")){
+                response.status(401);
+            } else {
+                response.status(403);
+            }
+        } else {
+            response.status(200);
+        }
+
+
+        return new Gson().toJson(regResponse);
+
+    }
+
+    public Object clearAllMethod(Request request, Response response) throws DataAccessException {
+
+        // String header = request.headers("authorization");
+
+        // GameData dataGame = new Gson().fromJson(request.body(), GameData.class);
+        ClearService service = new ClearService();
+        var regResponse = service.clearAll(memoryAuthDAO, memoryGameDAO, memoryUserDAO);
+        response.status(200);
         return new Gson().toJson(regResponse);
 
     }

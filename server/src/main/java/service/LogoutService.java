@@ -3,10 +3,7 @@ package service;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import model.AuthData;
-import request_result.FailureResponse;
-import request_result.LoginRequest;
-import request_result.LogoutRequest;
-import request_result.RegisterResponse;
+import request_result.*;
 
 import java.util.Objects;
 
@@ -19,7 +16,7 @@ public class LogoutService {
             }
 
             auth.deleteAuthData(authToken);
-            return "";
+            return new ClearAllResponse(null);
         } catch (DataAccessException error) {
             return new RegisterResponse("Error", "Error");
         }

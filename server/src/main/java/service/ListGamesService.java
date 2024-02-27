@@ -3,12 +3,11 @@ package service;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
-import model.AuthData;
+
 import model.GameData;
 import request_result.FailureResponse;
 import request_result.ListGamesRequest;
 import request_result.ListGamesResponse;
-import request_result.RegisterResponse;
 
 import java.util.ArrayList;
 import java.util.Collection;

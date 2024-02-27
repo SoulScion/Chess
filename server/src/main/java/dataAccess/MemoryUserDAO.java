@@ -31,9 +31,7 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     public void deleteAllUserData() {
-        for (UserData currentUserData : allUserData) {
-            allUserData.remove(currentUserData);
-        }
+        allUserData.clear();
     }
 
 }
