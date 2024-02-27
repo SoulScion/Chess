@@ -10,7 +10,7 @@ import service.RegisterService;
 import service.*;
 import request_result.*;
 
-public class ServiceTesting {
+public class ServiceTests {
 
     @Test
     public void registerPositive() {
