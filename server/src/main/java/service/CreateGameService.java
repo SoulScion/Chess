@@ -6,10 +6,6 @@ import dataAccess.GameDAO;
 import model.GameData;
 import request_result.CreateGameResponse;
 import request_result.FailureResponse;
-import request_result.ListGamesRequest;
-import request_result.ListGamesResponse;
-
-import java.util.Collection;
 
 public class CreateGameService {
 

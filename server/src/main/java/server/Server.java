@@ -1,8 +1,6 @@
 package server;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.stream.JsonReader;
 import model.GameData;
 import model.UserData;
 import request_result.*;
@@ -10,7 +8,6 @@ import spark.*;
 import dataAccess.*;
 import service.*;
 
-import java.io.Reader;
 import java.util.Objects;
 import java.util.Set;
 

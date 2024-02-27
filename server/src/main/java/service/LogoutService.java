@@ -2,10 +2,8 @@ package service;
 
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
-import model.AuthData;
 import request_result.*;
 
-import java.util.Objects;
 
 public class LogoutService {
 

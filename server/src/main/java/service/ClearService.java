@@ -1,10 +1,6 @@
 package service;
 
 import dataAccess.*;
-import model.AuthData;
-import model.UserData;
-import request_result.FailureResponse;
-import request_result.RegisterResponse;
 import request_result.ClearAllResponse;
 
 public class ClearService {
