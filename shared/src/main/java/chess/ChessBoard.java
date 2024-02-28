@@ -22,11 +22,9 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(chessBoard);
     }
-    // ^ Possibly don't have to have a hashcode
 
     public ChessBoard(ChessBoard originalBoard) {
         this.chessBoard = new ChessPiece[8][8];
-        // Deep copy the pieces from the original board to the new board
         for (int row= 0; row < chessBoard.length; row++) {
             for (int col = 0; col < chessBoard[row].length; col++) {
                 ChessPiece originalPiece = originalBoard.chessBoard[row][col];
@@ -42,15 +40,6 @@ public class ChessBoard {
         chessBoard = new ChessPiece[8][8];
     }
 
-    // public ChessBoard(ChessBoard other) {
-    //    other = new ChessPiece[8][8];
-    //}
-
-    // @Override
-    // public ChessBoard clone() {
-    //    return new ChessBoard(this);
-    //}
-
     /**
      * Adds a chess piece to the chessboard
      *
@@ -60,15 +49,11 @@ public class ChessBoard {
     public void addPiece(ChessPosition position, ChessPiece piece) {
 
         if (getPiece(position) != null && getPiece(position).getPieceType() == piece.getPieceType() && getPiece(position).getTeamColor() == piece.getTeamColor()) {
-            // call the remove piece private function
-            // if we are trying to add to a spot where a piece already exists, in your terms, that means we want to delete it.
-            // because we would never want to add a piece to a spot that is already occupied, unless it was some sort of code for something else.
             removePiece(position);
         } else {
             chessBoard[position.getRow()-1][position.getColumn()-1] = piece;
         }
 
-        // FINISHED: throw new RuntimeException("Not implemented");
     }
 
     private void removePiece(ChessPosition removingPosition) {
@@ -90,7 +75,6 @@ public class ChessBoard {
             return null;
         }
 
-        //FINISHED: throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -134,6 +118,5 @@ public class ChessBoard {
         addPiece(new ChessPosition(1,7), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(1,8), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
 
-        // FINISHED: throw new RuntimeException("Not implemented");
     }
 }
