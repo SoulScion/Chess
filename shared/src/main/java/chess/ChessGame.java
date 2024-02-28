@@ -74,9 +74,8 @@ public class ChessGame {
                     currentBoard.addPiece(move.getEndPosition(), currentPiece);
                     currentBoard.addPiece(move.getStartPosition(), currentPiece);
                 }
-                if(isInCheck(currentPiece.getTeamColor()) == true) {
+                if(isInCheck(currentPiece.getTeamColor())) {
                     currentBoard = new ChessBoard(clonedBoard);
-                    continue;
                 } else {
                     currentBoard = new ChessBoard(clonedBoard);
                     listValidatedMoves.add(move);
@@ -99,9 +98,10 @@ public class ChessGame {
             for (ChessMove test : listPieceMoves) {
                 if (test.getEndPosition().equals(move.getEndPosition())) {
                     notInCheck = true;
+                    break;
                 }
             }
-            if (notInCheck == true) {
+            if (notInCheck) {
                 ChessPiece checkingPiece = currentBoard.getPiece(move.getStartPosition());
 
                 if (checkingPiece.getTeamColor() == getTeamTurn()) {
@@ -178,14 +178,8 @@ public class ChessGame {
                         if (countingPiece.getTeamColor() == TeamColor.BLACK) {
                             continue;
                         } else {
-                            if (countingPiece.getPieceType() != ChessPiece.PieceType.KING) {
-                                if (pieceMovesChecker(currentBoard, countingPosition, countingPiece, blackKingPosition) == true) {
-                                    return true;
-                                }
-                            } else {
-                                if (pieceMovesChecker(currentBoard, countingPosition, countingPiece, blackKingPosition) == true) {
-                                    return true;
-                                }
+                            if (pieceMovesChecker(currentBoard, countingPosition, countingPiece, blackKingPosition)) {
+                                return true;
                             }
                         }
                     }
@@ -215,14 +209,8 @@ public class ChessGame {
                         if (countingPiece.getTeamColor() == TeamColor.WHITE) {
                             continue;
                         } else {
-                            if (countingPiece.getPieceType() != ChessPiece.PieceType.KING) {
-                                if (pieceMovesChecker(currentBoard, countingPosition, countingPiece, whiteKingPosition) == true) {
-                                    return true;
-                                }
-                            } else {
-                                if (pieceMovesChecker(currentBoard, countingPosition, countingPiece, whiteKingPosition) == true) {
-                                    return true;
-                                }
+                            if (pieceMovesChecker(currentBoard, countingPosition, countingPiece, whiteKingPosition)) {
+                                return true;
                             }
                         }
                     }
@@ -241,6 +229,7 @@ public class ChessGame {
         for (ChessMove position : listValidMoves) {
             if (allyKingPosition.getRow() == position.getEndPosition().getRow() && allyKingPosition.getColumn() == position.getEndPosition().getColumn()) {
                 inCheck = true;
+                break;
             }
         }
 
@@ -249,7 +238,7 @@ public class ChessGame {
     }
 
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (isInCheck(teamColor) == true && isInStalemate(teamColor) == true) {
+        if (isInCheck(teamColor) && isInStalemate(teamColor)) {
             return true;
         } else {
             return false;
@@ -258,11 +247,11 @@ public class ChessGame {
 
     public boolean isInStalemate(TeamColor teamColor) {
 
-        Collection<ChessMove> ValidatedMoves = new ArrayList<>();
+        Collection<ChessMove> validatedMoves = new ArrayList<>();
 
         while (true) {
             if (teamColor == ChessGame.TeamColor.WHITE && teamColor == getTeamTurn()) {
-                for (int row = 1; row <= 8; row++) { // Stepping through each row
+                for (int row = 1; row <= 8; row++) {
                     for (int col = 1; col <= 8; col++) {
                         ChessPosition countingPosition = new ChessPosition(row,col);
                         if (currentBoard.getPiece(countingPosition) != null) {
