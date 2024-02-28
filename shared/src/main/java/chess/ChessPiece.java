@@ -109,11 +109,9 @@ public class ChessPiece {
     }
 
     private void validPawnMoveHelper(int x, int y, ChessBoard board, ChessPiece pieceChecked, ChessPosition piecePosition, ArrayList<ChessMove> validMoves) {
-        int tempx = x;
-        int tempy = y;
-        if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
-            if (board.getPiece(new ChessPosition(tempx, tempy)) == null) { // Second Check
-                validMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+        if (x <= 8 && y <= 8 && x > 0 && y > 0) { // First Check
+            if (board.getPiece(new ChessPosition(x, y)) == null) { // Second Check
+                validMoves.add(new ChessMove(piecePosition, new ChessPosition(x, y), null));
             }
         }
     }
@@ -149,116 +147,36 @@ public class ChessPiece {
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
 
-        while(true) {
+        do {
             tempx = tempx + 1;
             tempy = tempy + 1;
-            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
-                if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
-                    // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
-                    // if (piece.pieceColor != tempPiece.pieceColor) {
-                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                        // System Check:
-                    // System.out.printf("%d, %d\n", tempx, tempy);
-                    //} else {
-                    //    break;
-                    //}
-                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) {
-                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
+        } while (!rookMoveHelper(piece, board, piecePosition, validBishopMoves, tempx, tempy));
 
         tempx = piecePosition.getRow();
         tempy = piecePosition.getColumn();
 
-        while(true) {
+        do {
             tempx = tempx - 1;
             tempy = tempy + 1;
-            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
-                if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
-                    // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
-                    // if (piece.pieceColor != tempPiece.pieceColor) {
-                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    // System Check:
-                    // System.out.printf("%d, %d\n", tempx, tempy);
-                    //} else {
-                    //    break;
-                    //}
-                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) {
-                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
+        } while (!rookMoveHelper(piece, board, piecePosition, validBishopMoves, tempx, tempy));
 
         tempx = piecePosition.getRow();
         tempy = piecePosition.getColumn();
 
-        while(true) {
+        do {
             tempx = tempx + 1;
             tempy = tempy - 1;
-            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
-                if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
-                    // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
-                    // if (piece.pieceColor != tempPiece.pieceColor) {
-                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    // System Check:
-                    // System.out.printf("%d, %d\n", tempx, tempy);
-                    //} else {
-                    //    break;
-                    //}
-                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) {
-                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
+        } while (!rookMoveHelper(piece, board, piecePosition, validBishopMoves, tempx, tempy));
 
         tempx = piecePosition.getRow();
         tempy = piecePosition.getColumn();
 
-        while(true) {
+        do {
             tempx = tempx - 1;
             tempy = tempy - 1;
-            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
-                if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
-                    validBishopMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    // System Check:
-                    // System.out.printf("%d, %d\n", tempx, tempy);
-                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) { // Third Check
-                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
+        } while (!rookMoveHelper(piece, board, piecePosition, validBishopMoves, tempx, tempy));
 
         return validBishopMoves;
-        // FINISHING: throw new RuntimeException("Not implemented");
     }
 
     private ArrayList<ChessMove> knightMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
@@ -283,111 +201,48 @@ public class ChessPiece {
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
 
-        while(true) {
+        do {
             tempx = tempx + 1;
-            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
-                if (board.getPiece(new ChessPosition(tempx, tempy)) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
-                    // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
-                    // if (piece.pieceColor != tempPiece.pieceColor) {
-                    validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    // System Check:
-                    // System.out.printf("%d, %d\n", tempx, tempy);
-                    //} else {
-                    //    break;
-                    //}
-                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) {
-                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
+        } while (!rookMoveHelper(piece, board, piecePosition, validRookMoves, tempx, tempy));
 
         tempx = piecePosition.getRow();
         tempy = piecePosition.getColumn();
 
-        while(true) {
+        do {
             tempx = tempx - 1;
-            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
-                if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
-                    // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
-                    // if (piece.pieceColor != tempPiece.pieceColor) {
-                    validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    // System Check:
-                    // System.out.printf("%d, %d\n", tempx, tempy);
-                    //} else {
-                    //    break;
-                    //}
-                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) {
-                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
+        } while (!rookMoveHelper(piece, board, piecePosition, validRookMoves, tempx, tempy));
 
         tempx = piecePosition.getRow();
         tempy = piecePosition.getColumn();
 
-        while(true) {
-            tempy = tempy + 1;
-            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
-                if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
-                    // ChessPiece tempPiece = board.getPiece(new ChessPosition(tempx, tempy));
-                    // if (piece.pieceColor != tempPiece.pieceColor) {
-                    validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    // System Check:
-                    // System.out.printf("%d, %d\n", tempx, tempy);
-                    //} else {
-                    //    break;
-                    //}
-                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) {
-                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
+        do {
+            tempy++;
+        } while (!rookMoveHelper(piece, board, piecePosition, validRookMoves, tempx, tempy));
 
         tempx = piecePosition.getRow();
         tempy = piecePosition.getColumn();
 
-        while(true) {
+        do {
             tempy = tempy - 1;
-            if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
-                if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) { // Second Check
-                    validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    // System Check:
-                    // System.out.printf("%d, %d\n", tempx, tempy);
-                    if (board.getPiece(new ChessPosition(tempx, tempy )) != null) { // Third Check
-                        if (piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
+        } while (!rookMoveHelper(piece, board, piecePosition, validRookMoves, tempx, tempy));
 
         return validRookMoves;
+    }
+
+    private boolean rookMoveHelper(ChessPiece piece, ChessBoard board, ChessPosition piecePosition, ArrayList<ChessMove> validRookMoves, int tempx, int tempy) {
+        if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) {
+            if (board.getPiece(new ChessPosition(tempx, tempy )) == null || piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+                validRookMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+                if (board.getPiece(new ChessPosition(tempx, tempy )) != null) {
+                    return piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor;
+                }
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+        return false;
     }
 
     private ArrayList<ChessMove> pawnMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition) {
@@ -395,7 +250,6 @@ public class ChessPiece {
         int tempx = piecePosition.getRow();
         int tempy = piecePosition.getColumn();
 
-        // Check for Starting Position Special Move:
         if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
             if (piecePosition.getRow() == 2 && board.getPiece(new ChessPosition(tempx + 1, tempy)) == null && board.getPiece(new ChessPosition(tempx + 2, tempy)) == null) {
                 validPawnMoveHelper(piecePosition.getRow() + 1, piecePosition.getColumn(), board, piece, piecePosition, validPawnMoves);
@@ -409,111 +263,47 @@ public class ChessPiece {
             }
         }
 
-        // Moving up one space:
         tempx = piecePosition.getRow() + 1;
-        // Check for Regular Move & Promotion:
-        if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) { // First Check
+        if (tempx <= 8 && tempy <= 8 && tempx > 0 && tempy > 0) {
             if (board.getPiece(new ChessPosition(tempx, tempy)) == null) {
-                if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                    if (piecePosition.getRow() + 1 == 8) {
-                        // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
-                    } else {
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    }
-                }
+                pawnMovesPosDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
             }
             tempx = piecePosition.getRow() - 1;
             if (board.getPiece(new ChessPosition(tempx, tempy)) == null) {
-                if (piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                    if (piecePosition.getRow() - 1 == 1) {
-                        // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
-                    } else {
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    }
-                }
+                pawnMovesNegDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
             }
 
         }
 
 
-        //Taking an Enemy Piece, Right Up Or Right Down:
         tempx = piecePosition.getRow() + 1;
         tempy = piecePosition.getColumn() + 1;
         if (piecePosition.getColumn() <= 7) {
             if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                    if (piecePosition.getRow() + 1 == 8) {
-                        // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
-                    } else {
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    }
-                }
+                pawnMovesPosDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
             }
         }
         tempx = piecePosition.getRow() - 1;
         tempy = piecePosition.getColumn() - 1;
         if (piecePosition.getColumn() > 1) {
             if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                if (piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                    if (piecePosition.getRow() - 1 == 1) {
-                        // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
-                    } else {
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    }
-                }
+                pawnMovesNegDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
             }
         }
 
 
-        //Taking an Enemy Piece, Left Up:
         tempx = piecePosition.getRow() + 1;
         tempy = piecePosition.getColumn() - 1;
         if (piecePosition.getColumn() > 1) {
             if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                    if (piecePosition.getRow() + 1 == 8) {
-                        // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
-                    } else {
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    }
-                }
+                pawnMovesPosDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
             }
         }
         tempx = piecePosition.getRow() - 1;
         tempy = piecePosition.getColumn() + 1;
         if (piecePosition.getColumn() <= 7) {
             if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                if (piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                    if (piecePosition.getRow() - 1 == 1) {
-                        // piece = ChessMove.getPromotionPiece(); POSSIBLY HAVE TO ADD THIS
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
-                    } else {
-                        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
-                    }
-                }
+                pawnMovesNegDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
             }
         }
 
@@ -521,31 +311,32 @@ public class ChessPiece {
         return validPawnMoves;
     }
 
+    private void pawnMovesNegDiagonal(ChessPiece piece, ChessPosition piecePosition, ArrayList<ChessMove> validPawnMoves, int tempx, int tempy) {
+        if (piece.pieceColor == ChessGame.TeamColor.BLACK) {
+            if (piecePosition.getRow() - 1 == 1) {
+                pawnPromotionChecking(piecePosition, validPawnMoves, tempx, tempy);
+            } else {
+                validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+            }
+        }
+    }
 
+    private void pawnPromotionChecking(ChessPosition piecePosition, ArrayList<ChessMove> validPawnMoves, int tempx, int tempy) {
+        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.QUEEN));
+        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.BISHOP));
+        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.KNIGHT));
+        validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), PieceType.ROOK));
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    private void pawnMovesPosDiagonal(ChessPiece piece, ChessPosition piecePosition, ArrayList<ChessMove> validPawnMoves, int tempx, int tempy) {
+        if (piece.pieceColor == ChessGame.TeamColor.WHITE) {
+            if (piecePosition.getRow() + 1 == 8) {
+                pawnPromotionChecking(piecePosition, validPawnMoves, tempx, tempy);
+            } else {
+                validPawnMoves.add(new ChessMove(piecePosition, new ChessPosition(tempx, tempy), null));
+            }
+        }
+    }
 
 
 }
