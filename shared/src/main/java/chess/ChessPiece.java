@@ -274,9 +274,7 @@ public class ChessPiece {
         tempx = piecePosition.getRow() + 1;
         tempy = piecePosition.getColumn() + 1;
         if (piecePosition.getColumn() <= 7) {
-            if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                pawnMovesPosDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
-            }
+            pawnSettingMoves(piece, board, piecePosition, tempx, tempy, validPawnMoves);
         }
         tempx = piecePosition.getRow() - 1;
         tempy = piecePosition.getColumn() - 1;
@@ -290,9 +288,7 @@ public class ChessPiece {
         tempx = piecePosition.getRow() + 1;
         tempy = piecePosition.getColumn() - 1;
         if (piecePosition.getColumn() > 1) {
-            if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                pawnMovesPosDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
-            }
+            pawnSettingMoves(piece, board, piecePosition, tempx, tempy, validPawnMoves);
         }
         tempx = piecePosition.getRow() - 1;
         tempy = piecePosition.getColumn() + 1;
@@ -304,6 +300,12 @@ public class ChessPiece {
 
 
         return validPawnMoves;
+    }
+
+    private void pawnSettingMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition, int tempx, int tempy, ArrayList<ChessMove> validPawnMoves) {
+        if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+            pawnMovesPosDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
+        }
     }
 
     private void pawnMovesNegDiagonal(ChessPiece piece, ChessPosition piecePosition, ArrayList<ChessMove> validPawnMoves, int tempx, int tempy) {
