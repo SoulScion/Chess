@@ -64,15 +64,12 @@ public class ChessGame {
 
                 if (currentPiece.getTeamColor() == ChessGame.TeamColor.WHITE && currentPiece.getPieceType() == ChessPiece.PieceType.PAWN && currentPosition.getRow() + 1 == 8) {
                     ChessPiece promotedPiece = new ChessPiece(currentPiece.getTeamColor(), move.getPromotionPiece());
-                    currentBoard.addPiece(move.getEndPosition(), promotedPiece);
-                    currentBoard.addPiece(move.getStartPosition(), currentPiece);
+                    removingAndAddingPieces(move, promotedPiece, currentPiece);
                 } else if (currentPiece.getTeamColor() == ChessGame.TeamColor.BLACK && currentPiece.getPieceType() == ChessPiece.PieceType.PAWN && currentPosition.getRow() - 1 == 1) {
                     ChessPiece promotedPiece = new ChessPiece(currentPiece.getTeamColor(), move.getPromotionPiece());
-                    currentBoard.addPiece(move.getEndPosition(), promotedPiece);
-                    currentBoard.addPiece(move.getStartPosition(), currentPiece);
+                    removingAndAddingPieces(move, promotedPiece, currentPiece);
                 } else {
-                    currentBoard.addPiece(move.getEndPosition(), currentPiece);
-                    currentBoard.addPiece(move.getStartPosition(), currentPiece);
+                    removingAndAddingPieces(move, currentPiece, currentPiece);
                 }
                 if(isInCheck(currentPiece.getTeamColor())) {
                     currentBoard = new ChessBoard(clonedBoard);
@@ -87,6 +84,12 @@ public class ChessGame {
         }
 
     }
+
+    private void removingAndAddingPieces(ChessMove move, ChessPiece promotedPiece, ChessPiece currentPiece) {
+        currentBoard.addPiece(move.getEndPosition(), promotedPiece);
+        currentBoard.addPiece(move.getStartPosition(), currentPiece);
+    }
+
 
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> listPieceMoves = new ArrayList<>();
@@ -125,11 +128,9 @@ public class ChessGame {
                     } else {
                         if (checkingPiece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
                             ChessPiece promotedPiece = new ChessPiece(checkingPiece.getTeamColor(), move.getPromotionPiece());
-                            currentBoard.addPiece(move.getEndPosition(), promotedPiece);
-                            currentBoard.addPiece(move.getStartPosition(), checkingPiece);
+                            removingAndAddingPieces(move, promotedPiece, checkingPiece);
                         } else {
-                            currentBoard.addPiece(move.getEndPosition(), checkingPiece);
-                            currentBoard.addPiece(move.getStartPosition(), checkingPiece);
+                            removingAndAddingPieces(move, checkingPiece, checkingPiece);
                         }
                     }
 
