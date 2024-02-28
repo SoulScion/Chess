@@ -274,35 +274,37 @@ public class ChessPiece {
         tempx = piecePosition.getRow() + 1;
         tempy = piecePosition.getColumn() + 1;
         if (piecePosition.getColumn() <= 7) {
-            pawnSettingMoves(piece, board, piecePosition, tempx, tempy, validPawnMoves);
+            pawnSettingMovesPos(piece, board, piecePosition, tempx, tempy, validPawnMoves);
         }
         tempx = piecePosition.getRow() - 1;
         tempy = piecePosition.getColumn() - 1;
         if (piecePosition.getColumn() > 1) {
-            if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                pawnMovesNegDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
-            }
+            pawnSettingMovesNeg(piece, board, piecePosition, tempx, tempy, validPawnMoves);
         }
 
 
         tempx = piecePosition.getRow() + 1;
         tempy = piecePosition.getColumn() - 1;
         if (piecePosition.getColumn() > 1) {
-            pawnSettingMoves(piece, board, piecePosition, tempx, tempy, validPawnMoves);
+            pawnSettingMovesPos(piece, board, piecePosition, tempx, tempy, validPawnMoves);
         }
         tempx = piecePosition.getRow() - 1;
         tempy = piecePosition.getColumn() + 1;
         if (piecePosition.getColumn() <= 7) {
-            if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
-                pawnMovesNegDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
-            }
+            pawnSettingMovesNeg(piece, board, piecePosition, tempx, tempy, validPawnMoves);
         }
 
 
         return validPawnMoves;
     }
 
-    private void pawnSettingMoves(ChessPiece piece, ChessBoard board, ChessPosition piecePosition, int tempx, int tempy, ArrayList<ChessMove> validPawnMoves) {
+    private void pawnSettingMovesNeg(ChessPiece piece, ChessBoard board, ChessPosition piecePosition, int tempx, int tempy, ArrayList<ChessMove> validPawnMoves) {
+        if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
+            pawnMovesNegDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
+        }
+    }
+
+    private void pawnSettingMovesPos(ChessPiece piece, ChessBoard board, ChessPosition piecePosition, int tempx, int tempy, ArrayList<ChessMove> validPawnMoves) {
         if (board.getPiece(new ChessPosition(tempx, tempy)) != null && piece.pieceColor != board.getPiece(new ChessPosition(tempx, tempy)).pieceColor) {
             pawnMovesPosDiagonal(piece, piecePosition, validPawnMoves, tempx, tempy);
         }
