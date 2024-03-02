@@ -9,11 +9,9 @@ public class MemoryUserDAO implements UserDAO {
 
     private Collection<UserData> allUserData = new ArrayList<>();
 
-    public UserData createUserData(String username, String password, String email) {
+    public void createUserData(String username, String password, String email) {
         UserData newUser = new UserData(username, password, email);
         allUserData.add(newUser);
-
-        return newUser;
 
     }
 

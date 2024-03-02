@@ -14,14 +14,30 @@ import java.util.Set;
 
 public class Server {
 
-    private GameDAO memoryGameDAO = new MemoryGameDAO();
 
-    private UserDAO memoryUserDAO = new MemoryUserDAO();
+    private GameDAO memoryGameDAO;
 
-    private AuthDAO memoryAuthDAO = new MemoryAuthDAO();
+    private UserDAO memoryUserDAO;
+
+    private AuthDAO memoryAuthDAO;
+
+    private void makeDAOs() {
+        try {
+
+            memoryGameDAO = new MemoryGameDAO();
+
+            memoryUserDAO = new SQLUserDAO();
+
+            memoryAuthDAO = new MemoryAuthDAO();
+
+        } catch (DataAccessException error) {
+            throw new RuntimeException(error);
+        }
+    }
 
 
     public int run(int desiredPort) {
+        makeDAOs();
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
