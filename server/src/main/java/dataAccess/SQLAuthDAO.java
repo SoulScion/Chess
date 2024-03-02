@@ -24,14 +24,10 @@ public class SQLAuthDAO implements AuthDAO {
         SecureRandom randomCode = new SecureRandom();
         byte numbers[] = new byte[20];
         randomCode.nextBytes(numbers);
-        String authToken = numbers.toString(); // Creating the authToken, used to authorize.
+        String authToken = numbers.toString();
 
         var statement = "INSERT INTO authData (authToken, username) VALUES (?, ?)";
-        // var json = new Gson().toJson(UserData);
         executeUpdate(statement, authToken, username);
-
-        // AuthData newAuth = new AuthData(authToken, username); // Creating a full AuthData Object.
-        // allAuthData.add(newAuth); // Adding the new authentication to the list of all authentications.
 
         return new AuthData(authToken, username);
     }
