@@ -1,7 +1,5 @@
 package dataAccess;
 
-import com.google.gson.Gson;
-import model.AuthData;
 import model.UserData;
 
 import java.util.ArrayList;
@@ -21,15 +19,7 @@ public class SQLUserDAO implements UserDAO {
 
     public void createUserData(String username, String password, String email) throws DataAccessException {
         var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-        // var json = new Gson().toJson(UserData);
         executeUpdate(statement, username, password, email);
-
-
-
-        // UserData newUser = new UserData(username, password, email);
-        // allUserData.add(newUser);
-
-        // return newUser;
 
     }
 
@@ -74,14 +64,6 @@ public class SQLUserDAO implements UserDAO {
         }
         return null;
 
-
-    //    for (UserData currentUserData : allUserData) {
-    //        if (currentUserData.username().equals(username)) {
-    //            return currentUserData;
-    //        }
-    //    }
-    //    return null;
-
     }
 
     public void deleteAllUserData() throws DataAccessException{
@@ -121,8 +103,6 @@ public class SQLUserDAO implements UserDAO {
             )
             """
     };
-
-    // `json` TEXT DEFAULT NULL,
 
 
     private void configureDatabase() throws DataAccessException {
