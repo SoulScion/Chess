@@ -18,28 +18,27 @@ public class SQLGameDAO implements GameDAO{
 
     private ArrayList<GameData> allGameData = new ArrayList<>();
 
-    private int gameID = 5;
+    private int priveteGameID = 5;
 
     public SQLGameDAO() throws DataAccessException{
         configureDatabase();
     }
 
     public int createGameData(String gameName) throws DataAccessException{
-        var statement = "INSERT INTO gameData (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+        var statement = "INSERT INTO gameData (whiteUsername, blackUsername, gameName, gameInfo) VALUES (?, ?, ?, ?)";
         var gameInfo = new Gson().toJson(new ChessGame());
-        return executeUpdate(statement, gameID, null, null, gameName, gameInfo);
+        return executeUpdate(statement, null, null, gameName, gameInfo);
     }
 
     public void updateGameData(int givenGameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()) {
-            var command = "SELECT gameID, whiteUsername, blackUsername, gameName, gameInfo FROM gameData WHERE gameID=?" + "WHERE gameID=?";
+            var command = "UPDATE gameData " + "SET whiteUsername=?, blackUsername=?, gameName=?, gameInfo=? WHERE gameID=?";
             try (var ps = conn.prepareStatement(command)) {
-                ps.setInt(1, gameID);
                 ps.setString(1, whiteUsername);
-                ps.setString(1, blackUsername);
-                ps.setString(1, gameName);
-                ps.setString(1, new Gson().toJson(chessGame));
-                ps.setInt(1, gameID);
+                ps.setString(2, blackUsername);
+                ps.setString(3, gameName);
+                ps.setString(4, new Gson().toJson(chessGame));
+                ps.setInt(5, givenGameID);
                 ps.executeUpdate();
 
             }
@@ -62,7 +61,7 @@ public class SQLGameDAO implements GameDAO{
         } catch (Exception e) {
             throw new DataAccessException("ERROR: 500");
         }
-        return null;
+        return result;
     }
 
     public GameData getGameData(int gameID) throws DataAccessException{

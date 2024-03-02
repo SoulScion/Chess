@@ -24,11 +24,11 @@ public class Server {
     private void makeDAOs() {
         try {
 
-            memoryGameDAO = new MemoryGameDAO();
+            memoryGameDAO = new SQLGameDAO();
 
             memoryUserDAO = new SQLUserDAO();
 
-            memoryAuthDAO = new MemoryAuthDAO();
+            memoryAuthDAO = new SQLAuthDAO();
 
         } catch (DataAccessException error) {
             throw new RuntimeException(error);
