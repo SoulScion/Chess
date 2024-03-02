@@ -1,7 +1,6 @@
 package dataAccess;
 
 import model.AuthData;
-import model.UserData;
 
 import java.security.SecureRandom;
 import java.sql.SQLException;
