@@ -19,7 +19,7 @@ public class CreateGameService {
                 return new FailureResponse("Error: unauthorized");
             }
 
-            int gameDataID = gameDAO.createGameData(data.gameName()).gameID();
+            int gameDataID = gameDAO.createGameData(data.gameName());
 
             return new CreateGameResponse(gameDataID);
         } catch (DataAccessException error) {

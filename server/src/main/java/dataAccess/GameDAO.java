@@ -6,7 +6,7 @@ import model.GameData;
 import java.util.Collection;
 
 public interface GameDAO {
-    GameData createGameData(String username) throws DataAccessException;
+    int createGameData(String username) throws DataAccessException;
 
     void updateGameData(int givenGameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) throws DataAccessException;
 

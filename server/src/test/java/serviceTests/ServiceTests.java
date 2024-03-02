@@ -207,7 +207,7 @@ public class ServiceTests {
         try {
 
             AuthData authToken = authDAO.createAuthData("username");
-            GameData game = gameDAO.createGameData("username");
+            int game = gameDAO.createGameData("username");
             GameData gameData = gameDAO.getGameData(5);
 
 
@@ -233,7 +233,7 @@ public class ServiceTests {
         try {
 
             AuthData authToken = authDAO.createAuthData("username");
-            GameData game = gameDAO.createGameData("username");
+            int game = gameDAO.createGameData("username");
             GameData gameData = gameDAO.getGameData(5);
 
 
@@ -259,7 +259,7 @@ public class ServiceTests {
         try {
 
             AuthData authToken = authDAO.createAuthData("username");
-            GameData game = gameDAO.createGameData("username");
+            int game = gameDAO.createGameData("username");
 
 
 
@@ -285,7 +285,7 @@ public class ServiceTests {
         try {
 
             AuthData authToken = authDAO.createAuthData("username");
-            GameData game = gameDAO.createGameData("username");
+            int game = gameDAO.createGameData("username");
 
 
 

@@ -84,8 +84,9 @@ public class SQLUserDAO implements UserDAO {
 
     }
 
-    public void deleteAllUserData() {
-        allUserData.clear();
+    public void deleteAllUserData() throws DataAccessException{
+        var command = "TRUNCATE user";
+        executeUpdate(command);
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
