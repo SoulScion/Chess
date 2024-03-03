@@ -1,6 +1,7 @@
 package dataAccess;
 
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +11,10 @@ public class MemoryUserDAO implements UserDAO {
     private Collection<UserData> allUserData = new ArrayList<>();
 
     public void createUserData(String username, String password, String email) {
-        UserData newUser = new UserData(username, password, email);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashPassword = encoder.encode(password);
+
+        UserData newUser = new UserData(username, hashPassword, email);
         allUserData.add(newUser);
 
     }
