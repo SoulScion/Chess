@@ -14,6 +14,7 @@ public class UserDAOTests {
 
         try {
             UserDAO userSQL = new SQLUserDAO();
+            userSQL.deleteAllUserData();
             userSQL.createUserData("user", "pass", "email");
             Assertions.assertThrows(DataAccessException.class, () -> userSQL.createUserData("user", "pass", "email"));
 
@@ -28,6 +29,7 @@ public class UserDAOTests {
 
         try {
             UserDAO userSQL = new SQLUserDAO();
+            userSQL.deleteAllUserData();
             userSQL.createUserData("user", "pass", "email");
             userSQL.createUserData("user-1", "pass-1", "email-1");
             userSQL.createUserData("user-2", "pass-2", "email-2");
@@ -46,6 +48,7 @@ public class UserDAOTests {
         UserDAO userSQL = null;
         try {
             userSQL = new SQLUserDAO();
+            userSQL.deleteAllUserData();
             userSQL.createUserData("user", "pass", "email");
             userSQL.createUserData("user-1", "pass-1", "email-1");
             userSQL.createUserData("user-2", "pass-2", "email-2");
@@ -62,6 +65,7 @@ public class UserDAOTests {
 
         try {
             UserDAO userSQL = new SQLUserDAO();
+            userSQL.deleteAllUserData();
             userSQL.createUserData("user", "pass", "email");
             userSQL.createUserData("user-1", "pass-1", "email-1");
             userSQL.createUserData("user-2", "pass-2", "email-2");
@@ -80,6 +84,7 @@ public class UserDAOTests {
 
         try {
             UserDAO userSQL = new SQLUserDAO();
+            userSQL.deleteAllUserData();
             userSQL.createUserData("user", "pass", "email");
             userSQL.createUserData("user-1", "pass-1", "email-1");
             userSQL.createUserData("user-2", "pass-2", "email-2");
@@ -98,6 +103,7 @@ public class UserDAOTests {
 
         try {
             UserDAO userSQL = new SQLUserDAO();
+            userSQL.deleteAllUserData();
             userSQL.createUserData("user", "pass", "email");
             userSQL.createUserData("user-1", "pass-1", "email-1");
             userSQL.createUserData("user-2", "pass-2", "email-2");

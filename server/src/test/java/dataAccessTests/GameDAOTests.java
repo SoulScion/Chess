@@ -39,6 +39,7 @@ public class GameDAOTests {
 
         try {
             GameDAO gameSQL = new SQLGameDAO();
+            gameSQL.deleteAllGameData();
             int gameID = gameSQL.createGameData("game");
             GameData game = gameSQL.getGameData(gameID);
 
@@ -102,12 +103,13 @@ public class GameDAOTests {
 
         try {
             GameDAO gameSQL = new SQLGameDAO();
+            gameSQL.deleteAllGameData();
             gameSQL.createGameData("game");
             gameSQL.createGameData("game-1");
             gameSQL.createGameData("game-2");
-            Assertions.assertNull(gameSQL.getGameData(6));
-            Assertions.assertNull(gameSQL.getGameData(20));
             Assertions.assertNull(gameSQL.getGameData(9));
+            Assertions.assertNull(gameSQL.getGameData(20));
+            Assertions.assertNull(gameSQL.getGameData(12));
 
         } catch (Exception e) {
             throw new DataAccessException("ERROR: 500");
@@ -120,6 +122,7 @@ public class GameDAOTests {
 
         try {
             GameDAO gameSQL = new SQLGameDAO();
+            gameSQL.deleteAllGameData();
             gameSQL.createGameData("game");
             gameSQL.createGameData("game-1");
             gameSQL.createGameData("game-2");
