@@ -1,14 +1,11 @@
 package dataAccess;
-
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
