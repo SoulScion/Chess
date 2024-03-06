@@ -23,6 +23,9 @@ public class SQLGameDAO implements GameDAO{
     }
 
     public int createGameData(String gameName) throws DataAccessException{
+        if (gameName == null) {
+            throw new DataAccessException("ERROR: 500");
+        }
         var statement = "INSERT INTO gameData (whiteUsername, blackUsername, gameName, gameInfo) VALUES (?, ?, ?, ?)";
         var gameInfo = new Gson().toJson(new ChessGame());
         return executeUpdate(statement, null, null, gameName, gameInfo);

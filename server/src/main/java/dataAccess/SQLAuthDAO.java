@@ -52,6 +52,9 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     public void deleteAuthData(String authToken) throws DataAccessException{
+        if (authToken == null) {
+            throw new DataAccessException("ERROR: 500");
+        }
         var command = "DELETE FROM authData WHERE authToken=?";
         executeUpdate(command, authToken);
     }
