@@ -12,8 +12,6 @@ import static java.sql.Types.NULL;
 
 public class SQLAuthDAO implements AuthDAO {
 
-    private Collection<AuthData> allAuthData = new ArrayList<>();
-
     public SQLAuthDAO() throws DataAccessException{
         configureDatabase();
     }

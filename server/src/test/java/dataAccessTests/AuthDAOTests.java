@@ -109,7 +109,7 @@ public class AuthDAOTests {
             authSQL.deleteAllAuthData();
             Assertions.assertNull(authSQL.getAuthData(userAuth.authToken()));
             Assertions.assertNull(authSQL.getAuthData(user1Auth.authToken()));
-            Assertions.assertNull(authSQL.getAuthData(user1Auth.authToken()));
+            Assertions.assertNull(authSQL.getAuthData(user2Auth.authToken()));
 
         } catch (Exception e) {
             throw new DataAccessException("ERROR: 500");

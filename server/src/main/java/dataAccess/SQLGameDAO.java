@@ -14,8 +14,6 @@ import static java.sql.Types.NULL;
 
 public class SQLGameDAO implements GameDAO{
 
-    private ArrayList<GameData> allGameData = new ArrayList<>();
-
     private int priveteGameID = 5;
 
     public SQLGameDAO() throws DataAccessException{
