@@ -2,8 +2,8 @@ package ui;
 
 import model.AuthData;
 import model.UserData;
+import model.*;
 import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 
 
 public class ServerFacade {
@@ -48,13 +49,25 @@ public class ServerFacade {
         authToken = null;
     }
 
+    public GameID createGame(GameName chessGameName) throws ClientAccessException {
+        var pathURL = "/game";
+        return this.requestOrder("POST", pathURL, chessGameName, GameID.class);
+    }
 
+    public void joinGame(JoinRequest joinInfo) throws ClientAccessException {
+        var pathURL = "/game";
+        this.requestOrder("PUT", pathURL, joinInfo, null);
+    }
 
+    public ArrayList<GameDataResponse> listGames() throws ClientAccessException {
+        var pathURL = "/game";
+        return this.requestOrder("GET", pathURL, null, ListAllGames.class).gamesList();
+    }
 
-
-
-
-
+    public void clear() throws ClientAccessException {
+        var pathURL = "/db";
+        this.requestOrder("DELETE", pathURL,null, null);
+    }
 
 
     private <T> T requestOrder(String requestType, String pathURL, Object requestData, Class<T> classResponse) throws ClientAccessException {
