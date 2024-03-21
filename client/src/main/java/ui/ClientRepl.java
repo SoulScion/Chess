@@ -16,7 +16,7 @@ public class ClientRepl {
         var evalResult = "";
 
         System.out.print(SET_BG_COLOR_DARK_GREY);
-        System.out.println("Welcome to CS240 Chess! Read every option and determine what you would like to do!");
+        System.out.println("Welcome to CS240 Chess! Input display to get started.");
         System.out.print(client.display());
 
         while (evalResult.equals("quit") != true) {
@@ -24,25 +24,14 @@ public class ClientRepl {
             String currentLine = clientScanner.nextLine();
             try {
                 evalResult = client.evaluateLine(currentLine);
-
-
+                System.out.print(SET_TEXT_COLOR_BLUE + evalResult);
+            } catch (Throwable error) {
+                var errorMessage = error.toString();
+                System.out.print(errorMessage);
             }
-
         }
-
-
-
-
-
-
+        System.out.println();
     }
-
-
-
-
-
-
-
 
 
     private void printUserInputLine() {

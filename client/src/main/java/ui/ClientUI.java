@@ -1,7 +1,8 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import model.*;
-import org.eclipse.jetty.server.Authentication;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +18,7 @@ public class ClientUI {
     private ArrayList<GameDataResponse> listOfGames;
 
     public ClientUI(String currentURL, ClientRepl currentRepl) {
-        fakeServer = new ServerFacade(currentURL);
+        facadeServer = new ServerFacade(currentURL);
         this.clientRepl = currentRepl;
     }
 
@@ -31,12 +32,16 @@ public class ClientUI {
                 case "Login" -> login(inputParamaters);
                 case "Logout" -> logout(inputParamaters);
                 case "Create" -> createGame(inputParamaters);
+                case "List" -> displayAllGames(inputParamaters);
+                case "Join", "Observe" -> joinGame(inputParamaters);
+                case "clearDatabase" -> clearData();
+                case "Quit" -> "Quit";
+                default -> display();
 
             };
 
-
-
-
+        } catch (ClientAccessException error) {
+            return "ERROR: 500";
         }
 
     }
@@ -44,7 +49,7 @@ public class ClientUI {
     public String display() {
         String[] options = {
                 "Create <NAME>",
-                "List Games",
+                "List",
                 "Join <ID> [White|Black|<empty>]",
                 "Observe <ID>",
                 "Logout",
@@ -82,7 +87,7 @@ public class ClientUI {
             displayOutput.append(" - ");
             displayOutput.append(options[i]);
             displayOutput.append(SET_TEXT_COLOR_WHITE);
-            displayOutput.append(" - "));
+            displayOutput.append(" - ");
             displayOutput.append(smallDescriptions[i]);
             displayOutput.append('\n');
         }
@@ -164,21 +169,80 @@ public class ClientUI {
                     return "Game Created: " + gameName + " ID: " + (counter + 1);
                 }
             }
-            return "Error: Failed to create game."
+            return "Error: Failed to create game. Please try again.";
         } catch (ClientAccessException error) {
             return "Name already taken, please try a different game name.";
         }
-
-        return null;
     }
 
     private String displayAllGames(String[] inputParameters) {
-
-
-
-        return null;
+        if (userState == ClientState.LOGGED_OUT) {
+            return "In order to list all chess games, you must be logged in.";
+        }
+        addNewGame();
+        return createListOfGames();
 
     }
+
+    private String joinGame(String[] inputParameters) {
+        if (userState == ClientState.LOGGED_OUT) {
+            return "In order to join a game, you must be logged in.";
+        }
+        int counter = Integer.parseInt(inputParameters[0]);
+        try {
+            addNewGame();
+            var currentGame = listOfGames.get(counter - 1);
+            if (inputParameters.length == 1) {
+                try {
+                    facadeServer.joinGame(new JoinRequest(currentGame.gameID(), null));
+                } catch (ClientAccessException error) {
+                    return "Error: Failed to join and Observe Game.";
+                }
+                ChessBoardUI.main(new String[]{new ChessBoard().toString()});
+                return "";
+
+            } else if (inputParameters.length == 2) {
+                if (Objects.equals(inputParameters[1].toLowerCase(), "white")) {
+                    if (currentGame.whiteUsername() != null) {
+                        return "White team is taken. Please, try again.";
+                    }
+
+                    ChessGame.TeamColor userColor = ChessGame.TeamColor.WHITE;
+                    try {
+                        facadeServer.joinGame(new JoinRequest(currentGame.gameID(), userColor));
+                    } catch (ClientAccessException error) {
+                        return "Error: Failed to join and Observe Game as White.";
+                    }
+                } else if (Objects.equals(inputParameters[1].toLowerCase(), "black")) {
+                    if (currentGame.whiteUsername() != null) {
+                        return "Black team is taken. Please, try again.";
+                    }
+
+                    ChessGame.TeamColor userColor = ChessGame.TeamColor.BLACK;
+                    try {
+                        facadeServer.joinGame(new JoinRequest(currentGame.gameID(), userColor));
+                    } catch (ClientAccessException error) {
+                        return "Error: Failed to join and Observe Game as Black.";
+                    }
+
+                } else {
+                    return "Gave an Invalid Color.";
+                }
+                ChessBoardUI.main(new String[]{new ChessBoard().toString()});
+                return "";
+            }
+        } catch (IndexOutOfBoundsException error) {
+            return "The game your trying to join doesn't exist.";
+        }
+        return "Given an invalid input";
+
+    }
+
+    private String clearData() throws ClientAccessException {
+        facadeServer.clear();
+        return "Database Deleted";
+    }
+
 
     private void addNewGame() {
         try {
@@ -213,6 +277,27 @@ public class ClientUI {
         } catch (ClientAccessException error) {
             System.out.print("ERROR: 500");
         }
+    }
+
+    private String createListOfGames(){
+        StringBuilder listString = new StringBuilder();
+        listString.append("*-----*------------*------------*------------*\n");
+        listString.append("| ID  | White PLayer | Black Player | Game Name |");
+        listString.append("*-----*------------*------------*------------*\n");
+        for (int counter = 0; counter < listOfGames.size(); counter++) {
+            var currentGame = listOfGames.get(counter);
+            listString.append("| ");
+            listString.append(counter + 1);
+            listString.append("  | ");
+            listString.append(currentGame.whiteUsername());
+            listString.append(" | ");
+            listString.append(currentGame.blackUsername());
+            listString.append(" | ");
+            listString.append(currentGame.gameName());
+            listString.append(" |");
+        }
+        return String.valueOf(listString);
+
     }
 
 
