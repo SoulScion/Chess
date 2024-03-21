@@ -16,14 +16,14 @@ public class ClientRepl {
         var evalResult = "";
 
         System.out.print(SET_BG_COLOR_DARK_GREY);
-        System.out.println("Welcome to Cade's CS240 Chess! Read every option and determine what you would like to do!");
-        System.out.print(client.help());
+        System.out.println("Welcome to CS240 Chess! Read every option and determine what you would like to do!");
+        System.out.print(client.display());
 
         while (evalResult.equals("quit") != true) {
             printUserInputLine();
             String currentLine = clientScanner.nextLine();
             try {
-                evalResult = client.eval(currentLine);
+                evalResult = client.evaluateLine(currentLine);
 
 
             }
