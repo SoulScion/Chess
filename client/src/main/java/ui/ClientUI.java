@@ -1,12 +1,11 @@
 package ui;
 
-import model.AuthData;
-import model.GameDataResponse;
-import model.UserData;
+import model.*;
 import org.eclipse.jetty.server.Authentication;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
@@ -15,7 +14,7 @@ public class ClientUI {
 
     private ClientRepl clientRepl;
     private ServerFacade facadeServer;
-    private ArrayList<GameDataResponse> ListAllGames;
+    private ArrayList<GameDataResponse> listOfGames;
 
     public ClientUI(String currentURL, ClientRepl currentRepl) {
         fakeServer = new ServerFacade(currentURL);
@@ -112,6 +111,115 @@ public class ClientUI {
         return "Invalid Authorization";
 
     }
+
+    private String login(String[] inputParameters) {
+        if (userState == ClientState.LOGGED_IN) {
+            return "In order to login a new user, you must be logged out.";
+        }
+
+        if (inputParameters.length == 2) {
+            UserData newUser = new UserData(inputParameters[0], inputParameters[1], null);
+            AuthData newUserAuth;
+
+            try {
+                newUserAuth = facadeServer.login(newUser);
+            } catch (ClientAccessException error) {
+                return "Invalid Authorization";
+            }
+
+            userState = ClientState.LOGGED_IN;
+            return "You are now logged in as" + newUserAuth.username();
+        }
+        return "Invalid Authorization";
+
+    }
+
+    private String logout(String[] inputParameters) {
+        if (userState == ClientState.LOGGED_OUT) {
+            return "In order to logout an existing user, you must be logged in.";
+        }
+
+        userState = ClientState.LOGGED_OUT;
+
+        try {
+            facadeServer.logout();
+        } catch (ClientAccessException error) {
+            return "Problem Occurred: Logout Failed";
+        }
+        return "Successfully logged out user.";
+
+    }
+
+    private String createGame(String[] inputParameters) {
+        if (userState == ClientState.LOGGED_OUT) {
+            return "In order to create a new chess game, you must be logged in.";
+        }
+        String gameName = String.join(" ", inputParameters);
+        GameID newGameID;
+        try {
+            newGameID = facadeServer.createGame(new GameName(gameName));
+            addNewGame();
+            for (int counter = 0; counter < listOfGames.size(); counter++) {
+                if (listOfGames.get(counter).gameID() == newGameID.gameID()) {
+                    return "Game Created: " + gameName + " ID: " + (counter + 1);
+                }
+            }
+            return "Error: Failed to create game."
+        } catch (ClientAccessException error) {
+            return "Name already taken, please try a different game name.";
+        }
+
+        return null;
+    }
+
+    private String displayAllGames(String[] inputParameters) {
+
+
+
+        return null;
+
+    }
+
+    private void addNewGame() {
+        try {
+            var currentGames = facadeServer.listGames();
+            ArrayList<GameDataResponse> tempList = new ArrayList<>();
+
+            if (listOfGames != null) {
+                for (var currentInList : listOfGames) {
+                    for (var newGame : currentGames) {
+                        if (Objects.equals(newGame.gameID(), currentInList.gameID())) {
+                            tempList.add(newGame);
+                        }
+                    }
+                }
+                for (var newGame : currentGames) {
+                    boolean gameSearch = false;
+                    for (var currentInList : listOfGames) {
+                        if (Objects.equals(newGame.gameID(), currentInList.gameID())) {
+                            gameSearch = true;
+                            break;
+                        }
+                    }
+                    if (gameSearch != true) {
+                        tempList.add(newGame);
+                    }
+                }
+            } else {
+                tempList = currentGames;
+            }
+            listOfGames = tempList;
+
+        } catch (ClientAccessException error) {
+            System.out.print("ERROR: 500");
+        }
+    }
+
+
+
+
+
+
 
 
 
