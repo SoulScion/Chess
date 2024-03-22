@@ -1,5 +1,6 @@
 package clientTests;
 
+import chess.ChessGame;
 import model.*;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -122,16 +123,14 @@ public class ServerFacadeTests {
         } catch (ClientAccessException error) {
             Assertions.fail();
         }
-        Collection<GameDataResponse> expectedResult = new ArrayList<>();
-        expectedResult.add(new GameDataResponse(chessGameID.gameID(), null,  null, "ChessGame"));
-        Assertions.assertEquals(expectedResult, testList);
+        Collection<GameDataResponse> correctResult = new ArrayList<>();
+        correctResult.add(new GameDataResponse(chessGameID.gameID(), null,  null, "ChessGame"));
+        Assertions.assertEquals(correctResult, testList);
 
     }
 
     @Test
     public void listAllGamesNegative() throws ClientAccessException {
-        Collection<GameDataResponse> testList = null;
-
         try {
             facadeServer.logout();
         } catch (ClientAccessException error) {
@@ -139,6 +138,42 @@ public class ServerFacadeTests {
         }
         Assertions.assertThrows(ClientAccessException.class, () -> facadeServer.listGames());
 
+    }
+
+    @Test
+    public void joinGamePositive() {
+        Assertions.assertDoesNotThrow(() -> facadeServer.joinGame(new JoinRequest(chessGameID.gameID(), ChessGame.TeamColor.WHITE)));
+        try {
+            Collection<GameDataResponse> gameList = facadeServer.listGames();
+            Collection<GameDataResponse> correctResult = new ArrayList<>();
+            correctResult.add(new GameDataResponse(chessGameID.gameID(), "Davy", null, "ChessGame"));
+            Assertions.assertEquals(correctResult, gameList);
+        } catch (ClientAccessException error) {
+            Assertions.fail();
+        }
+    }
+
+    @Test
+    public void joinGameNegative() {
+        Assertions.assertDoesNotThrow(() -> facadeServer.joinGame(new JoinRequest(chessGameID.gameID(), ChessGame.TeamColor.WHITE)));
+        Assertions.assertThrows(ClientAccessException.class, () -> facadeServer.joinGame(new JoinRequest(chessGameID.gameID(), ChessGame.TeamColor.WHITE)));
+
+    }
+
+    @Test
+    public void clearPositive() {
+        try {
+            facadeServer.register(new UserData("user-1", "pass-1", "email-1"));
+            facadeServer.register(new UserData("user-2", "pass-2", "email-2"));
+            facadeServer.register(new UserData("user-3", "pass-3", "email-3"));
+
+            facadeServer.createGame(new GameName("ChessGame-2"));
+            facadeServer.createGame(new GameName("ChessGame-3"));
+            facadeServer.createGame(new GameName("ChessGame-4"));
+        } catch(ClientAccessException error) {
+            Assertions.fail();
+        }
+        Assertions.assertDoesNotThrow(() -> facadeServer.clear());
     }
 
 
