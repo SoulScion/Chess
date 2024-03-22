@@ -19,7 +19,7 @@ public class ServerFacade {
     private String authToken;
     private String facadeURL;
 
-    ServerFacade(String givenURL) {
+    public ServerFacade(String givenURL) {
         facadeURL = givenURL;
     }
 
@@ -61,7 +61,7 @@ public class ServerFacade {
 
     public ArrayList<GameDataResponse> listGames() throws ClientAccessException {
         var pathURL = "/game";
-        return this.requestOrder("GET", pathURL, null, ListAllGames.class).gamesList();
+        return this.requestOrder("GET", pathURL, null, ListAllGames.class).games();
     }
 
     public void clear() throws ClientAccessException {
@@ -127,6 +127,8 @@ public class ServerFacade {
             return false;
         }
     }
+
+
 
 
 

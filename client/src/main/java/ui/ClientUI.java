@@ -32,7 +32,7 @@ public class ClientUI {
                 case "Login" -> login(inputParamaters);
                 case "Logout" -> logout(inputParamaters);
                 case "Create" -> createGame(inputParamaters);
-                case "List" -> displayAllGames(inputParamaters);
+                case "List" -> displayAllGames();
                 case "Join", "Observe" -> joinGame(inputParamaters);
                 case "clearDatabase" -> clearData();
                 case "Quit" -> "Quit";
@@ -175,7 +175,7 @@ public class ClientUI {
         }
     }
 
-    private String displayAllGames(String[] inputParameters) {
+    private String displayAllGames() {
         if (userState == ClientState.LOGGED_OUT) {
             return "In order to list all chess games, you must be logged in.";
         }
@@ -265,7 +265,7 @@ public class ClientUI {
                             break;
                         }
                     }
-                    if (gameSearch != true) {
+                    if (!gameSearch) {
                         tempList.add(newGame);
                     }
                 }
@@ -275,26 +275,19 @@ public class ClientUI {
             listOfGames = tempList;
 
         } catch (ClientAccessException error) {
-            System.out.print("ERROR: 500");
+            System.out.println(error.getMessage());
         }
     }
 
     private String createListOfGames(){
         StringBuilder listString = new StringBuilder();
-        listString.append("*-----*------------*------------*------------*\n");
-        listString.append("| ID  | White PLayer | Black Player | Game Name |");
-        listString.append("*-----*------------*------------*------------*\n");
+        listString.append("_____________________________________________________\n");
+        listString.append(String.format("| ID  | %-14s| %-14s| %-12s|\n", "White Player", "Black Player", "Game Name"));
+        listString.append("_____________________________________________________\n");
         for (int counter = 0; counter < listOfGames.size(); counter++) {
             var currentGame = listOfGames.get(counter);
-            listString.append("| ");
-            listString.append(counter + 1);
-            listString.append("  | ");
-            listString.append(currentGame.whiteUsername());
-            listString.append(" | ");
-            listString.append(currentGame.blackUsername());
-            listString.append(" | ");
-            listString.append(currentGame.gameName());
-            listString.append(" |");
+            String.format("| %-4d| %-14s| %-14s| %-12s|\n", counter+1, currentGame.whiteUsername(), currentGame.blackUsername(), currentGame.gameName());
+            listString.append("_____________________________________________________\n");
         }
         return String.valueOf(listString);
 

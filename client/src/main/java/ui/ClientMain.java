@@ -5,7 +5,7 @@ import chess.ChessPiece;
 
 public class ClientMain {
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         var clientURL = "http://localhost:8080";
         if (args.length == 1) {
             clientURL = args[0];
