@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class ServerFacade {
@@ -79,6 +80,10 @@ public class ServerFacade {
             if (authToken != null) {
                 httpConnection.setRequestProperty("authorization", authToken);
             }
+
+            //if (requestData instanceof AuthData || requestData instanceof GameID || ((Objects.equals(requestType, "GET") || Objects.equals(requestType, "PUT")) && Objects.equals(pathURL, "/game"))) {
+            //    httpConnection.setRequestProperty("authorization", authToken);
+            //}
 
             writeRequestBody(requestData, httpConnection);
             httpConnection.connect();
