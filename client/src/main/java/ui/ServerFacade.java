@@ -12,7 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+// import java.util.Objects;
 
 
 public class ServerFacade {
@@ -61,8 +62,13 @@ public class ServerFacade {
     }
 
     public ArrayList<GameDataResponse> listGames() throws ClientAccessException {
-        var pathURL = "/game";
+        var pathURL = "/objects";
         return this.requestOrder("GET", pathURL, null, ListAllGames.class).games();
+    }
+
+    public ConcurrentHashMap<Integer, GameData> getObjectsGame() throws ClientAccessException {
+        var pathURL = "/game";
+        return this.requestOrder("GET", pathURL, null, GamesObjects.class).gameObjects();
     }
 
     public void clear() throws ClientAccessException {
