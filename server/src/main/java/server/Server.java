@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import errorExceptions.ServerResponseException;
 import model.GameData;
+import model.GamesObjects;
 import model.UserData;
 import request_result.*;
 import spark.*;
@@ -47,7 +48,7 @@ public class Server {
         Spark.post("/session", this::loginMethod);
         Spark.delete("/session", this::logoutMethod);
         Spark.get("/game", this::listGamesMethod);
-        Spark.get("/objects", this::gameObjects);
+        Spark.get("/objects", this::gameObjectsMethod);
         Spark.post("/game", this::createGameMethod);
         Spark.put("/game", this::joinGameMethod);
         Spark.delete("/db", this::clearAllMethod);
@@ -155,17 +156,17 @@ public class Server {
 
     }
 
-    private Object gameObjects(Request request, Response response) throws ServerResponseException, DataAccessException {
-        var authToken = request.headers("authorization");
+    private Object gameObjectsMethod(Request request, Response response) throws ServerResponseException, DataAccessException {
+        // var authToken = request.headers("authorization");
         // AuthService.authenticate(authToken);
+        String header = request.headers("authorization");
 
-        ConcurrentHashMap<Integer, GameData> games;
         ListGamesService service = new ListGamesService(memoryGameDAO);
-        games = ListGamesService.getChessGameObjects();
+        ConcurrentHashMap<Integer, GameData> games = service.getChessGameObjects();
 
         response.status(200);
-        response.body(new Gson().toJson(new GameObjects(games)));
-        return new Gson().toJson(new GameObjects(games));
+        response.body(new Gson().toJson(new GamesObjects(games)));
+        return new Gson().toJson(new GamesObjects(games));
     }
 
     public Object createGameMethod(Request request, Response response) throws DataAccessException {
