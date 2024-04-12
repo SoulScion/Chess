@@ -41,7 +41,8 @@ public class ChessGame {
      */
     public enum TeamColor {
         WHITE,
-        BLACK
+        BLACK,
+        NONE
     }
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
@@ -149,6 +150,20 @@ public class ChessGame {
         } else if (teamTurnCheckPiece.getTeamColor() == ChessGame.TeamColor.BLACK && getTeamTurn() == ChessGame.TeamColor.BLACK) {
             setTeamTurn(ChessGame.TeamColor.WHITE);
         }
+        // These were newly added:
+        if (isInCheckmate(getTeamTurn())) {
+            setTeamTurn(TeamColor.NONE);
+            throw new InvalidMoveException("Checkmate!");
+        }
+        if (isInStalemate(getTeamTurn())) {
+            setTeamTurn(TeamColor.NONE);
+            throw new InvalidMoveException("Stalemate!");
+        }
+        if (isInCheck(getTeamTurn())) {
+            throw new InvalidMoveException("Check!");
+        }
+
+
     }
 
     public boolean isInCheck(TeamColor teamColor) {
