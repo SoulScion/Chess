@@ -13,8 +13,10 @@ import java.util.Objects;
 
 public class LoginService {
     private final AuthDAO authDAO;
+    private final UserDAO userDAO;
 
-    public LoginService(AuthDAO authDAO) {
+    public LoginService(UserDAO userDAO, AuthDAO authDAO) {
+        this.userDAO = userDAO;
         this.authDAO = authDAO;
     }
 

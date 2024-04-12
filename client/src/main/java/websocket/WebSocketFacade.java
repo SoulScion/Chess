@@ -17,13 +17,13 @@ import java.net.URISyntaxException;
 
 public class WebSocketFacade extends Endpoint{
     Session webSession;
-    NotifyHandler notificationHandler;
+    NotifyHandler notifyHandler;
 
     public WebSocketFacade(String url, NotifyHandler notificationHandler) {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/connect");
-            this.notificationHandler = notificationHandler;
+            this.notifyHandler = notificationHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.webSession = container.connectToServer(this, socketURI);
@@ -40,8 +40,8 @@ public class WebSocketFacade extends Endpoint{
                     }
                 }
             });
-        } catch (URISyntaxException | DeploymentException | IOException e) {
-            throw new RuntimeException(e);
+        } catch (URISyntaxException | DeploymentException | IOException error) {
+            throw new RuntimeException(error);
         }
     }
 

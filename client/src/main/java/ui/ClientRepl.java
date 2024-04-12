@@ -2,41 +2,61 @@ package ui;
 
 import java.util.Scanner;
 
+import webSocketMessages.serverMessages.ErrorMessage;
+import webSocketMessages.serverMessages.LoadGameMessage;
+import webSocketMessages.serverMessages.NotifyMessage;
+import webSocketMessages.serverMessages.ServerMessage;
+import websocket.NotifyHandler;
+
 import static ui.EscapeSequences.*;
 
-public class ClientRepl {
-    private ClientUI client;
+public class ClientRepl implements NotifyHandler{
+    private final ClientUI clientUI;
 
-    public ClientRepl(String clientURL) {
-        client = new ClientUI(clientURL, this);
+    public ClientRepl(String serverUrl) {
+        clientUI = new ClientUI(serverUrl, this);
     }
 
     public void run() {
-        Scanner clientScanner = new Scanner(System.in);
-        var evalResult = "";
+        System.out.print(SET_BG_COLOR_LIGHT_GREY);
+        System.out.println("\uD83D\uDC51 Welcome to 240 Chess. Type Help to get started. \uD83D\uDC51");
+        System.out.print(clientUI.displayHelp());
 
-        System.out.print(SET_BG_COLOR_DARK_GREY);
-        System.out.println("Welcome to CS240 Chess! Input display to get started.");
-        System.out.print(client.displayHelp());
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
 
-        while (evalResult.equals("quit") != true) {
-            printUserInputLine();
-            String currentLine = clientScanner.nextLine();
+        while (!result.equals("quit")) {
+            printPrompt();
+            String line = scanner.nextLine();
+
             try {
-                evalResult = client.evaluateLine(currentLine);
-                System.out.print(SET_TEXT_COLOR_BLUE + evalResult);
-            } catch (Throwable error) {
-                var errorMessage = error.toString();
-                System.out.print(errorMessage);
+                result = clientUI.evaluateLine(line);
+                System.out.print(SET_TEXT_COLOR_BLUE + result);
+            } catch (Throwable e) {
+                System.out.print(e.getMessage());
             }
         }
+
         System.out.println();
     }
 
-
-    private void printUserInputLine() {
-        System.out.print(SET_TEXT_COLOR_WHITE + "\n" + "[" + ClientUI.userState + "] >>> " + SET_TEXT_COLOR_BLUE);
+    private void printPrompt() {
+        System.out.print(SET_TEXT_COLOR_BLACK + "\n" + "[" + ClientUI.userState + "] >>> " + SET_TEXT_COLOR_GREEN);
+    }
+    public void notifyMessage(NotifyMessage notifyMessage) {
+        System.out.print(SET_TEXT_COLOR_RED + notifyMessage.getNotifyMessage());
+        printPrompt();
     }
 
+    public void loadGameMessage(LoadGameMessage loadMessage) {
+        var gameLoad = loadMessage.getNewGame();
+        var colorLoad = loadMessage.getTeamColor();
+        ChessBoardUI.main(gameLoad.game(), colorLoad);
+        printPrompt();
+    }
 
+    public void errorMessage(ErrorMessage errorMessage) {
+        System.out.print(SET_TEXT_COLOR_YELLOW + errorMessage.getErrorMessage());
+        printPrompt();
+    }
 }

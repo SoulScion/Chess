@@ -53,7 +53,7 @@ public class ServiceTests {
     public void loginPositive() {
         AuthDAO authDAO = new MemoryAuthDAO();
         UserDAO userDAO = new MemoryUserDAO();
-        LoginService loginService = new LoginService(authDAO);
+        LoginService loginService = new LoginService(userDAO,authDAO);
         try {
 
             userDAO.createUserData("username", "password", "email-1");
@@ -77,7 +77,7 @@ public class ServiceTests {
     public void loginNegative() {
         AuthDAO authDAO = new MemoryAuthDAO();
         UserDAO userDAO = new MemoryUserDAO();
-        LoginService loginService = new LoginService(authDAO);
+        LoginService loginService = new LoginService(userDAO, authDAO);
         try {
 
             userDAO.createUserData("username", "password", "email-1");

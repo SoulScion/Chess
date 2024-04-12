@@ -9,10 +9,12 @@ import request_result.*;
 import spark.*;
 import dataAccess.*;
 import service.*;
+import websocket.WebSocketHandler;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 
 
 public class Server {
@@ -24,6 +26,11 @@ public class Server {
 
     private AuthDAO memoryAuthDAO;
 
+    private LoginService loginService;
+    private CreateGameService createGameService;
+
+    private WebSocketHandler webSocketHandler;
+
     private void makeDAOs() {
         try {
 
@@ -32,6 +39,12 @@ public class Server {
             memoryUserDAO = new SQLUserDAO();
 
             memoryAuthDAO = new SQLAuthDAO();
+
+            loginService = new LoginService(memoryUserDAO,memoryAuthDAO);
+
+            createGameService = new CreateGameService(memoryGameDAO);
+
+            webSocketHandler = new WebSocketHandler(createGameService, loginService);
 
         } catch (DataAccessException error) {
             throw new RuntimeException(error);
@@ -44,6 +57,7 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+        Spark.webSocket("/connect", webSocketHandler);
         Spark.post("/user", this::registerMethod);
         Spark.post("/session", this::loginMethod);
         Spark.delete("/session", this::logoutMethod);
@@ -96,7 +110,7 @@ public class Server {
         // loginRequest user = new Gson().
 
         LoginRequest dataUser = new Gson().fromJson(request.body(), LoginRequest.class);
-        LoginService service = new LoginService(memoryAuthDAO);
+        LoginService service = new LoginService(memoryUserDAO, memoryAuthDAO);
         var regResponse = service.login(memoryUserDAO, dataUser, memoryAuthDAO);
 
         if (regResponse instanceof FailureResponse) {
