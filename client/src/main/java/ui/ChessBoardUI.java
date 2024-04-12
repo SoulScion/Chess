@@ -1,386 +1,262 @@
 package ui;
+import chess.*;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
 public class ChessBoardUI {
-    private static final int BOARD_SIZE_IN_SQUARES = 10;
-    private static final int SQUARE_SIZE_IN_CHARS = 10;
-    private static final int LINE_WIDTH_IN_CHARS = 1;
 
-    public static void main(String[] args) {
+    private static final String[] WHITE_PIECES = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
+    private static final String[] BLACK_PIECES = {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_QUEEN, BLACK_KING, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
+    private static final String[] LETTER_HEADERS = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
+    private static final int BOARD_SIZE_SQUARES = 8;
+    private static final int LINE_WIDTH_CHARS = 1;
+
+    public static void main(ChessGame game, ChessGame.TeamColor color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        var board = game.getBoard();
 
-        out.print(ERASE_SCREEN);
+        out.println(ERASE_SCREEN);
 
-        drawBlackBoard(out);
+        if (color == ChessGame.TeamColor.WHITE) {
+            drawHeadersForward(out);
 
-        out.print("\n");
-        out.print(SET_BG_COLOR_BLACK);
-        out.print("\n");
+            drawChessBoardForward(out, board);
 
-        drawWhiteBoard(out);
+            drawHeadersForward(out);
+        } else {
+            drawHeadersBackward(out);
 
-        out.print(SET_BG_COLOR_BLACK);
+            drawChessBoardBackward(out, board);
+
+            drawHeadersBackward(out);
+        }
+
+        out.print(SET_BG_COLOR_WHITE);
+
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void drawBlackBoard(PrintStream out) {
+    public static void highlight(ChessGame game, ChessGame.TeamColor color, ChessPosition start) {
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        var board = game.getBoard();
 
-        String[] boardBackColors = {EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY};
 
+        out.println(ERASE_SCREEN);
 
-        String preSpace = "\u2002\u2006 \u2009\u2002";
-        String postSpace = "\u2002 \u200A\u2002";
-        String[] letters = {"\u2002\u2005a\u200A\u2005\u2002", "\u2002\u2005b\u2005\u2002", "\u2002\u2005c\u2005\u2002", "\u2002\u2005\u200Ad\u2005\u2002", "\u2002\u200A\u200Ae\u2005\u2002", "\u2002\u2005f\u2005\u2002", "\u2002\u2005\u200Ag\u200A\u2005\u2002", "\u2002\u2005h\u2005\u2002"};
-        String[] lettersReverse = {"\u2002\u2005h\u200A\u2005\u2002", "\u2002\u2005g\u2005\u2002", "\u2002\u2005f\u2005\u2002", "\u2002\u2005\u200Ae\u2005\u2002", "\u2002\u200A\u200Ad\u2005\u2002", "\u2002\u2005c\u2005\u2002", "\u2002\u2005\u200Ab\u200A\u2005\u2002", "\u2002\u2005a\u2005\u2002"};
-        String[] numbers = {"\u20028\u2004\u2002", "\u20027\u2004\u2002", "\u20026\u2004\u2002", "\u20025\u2004\u2002", "\u20024\u2004\u2002", "\u20023\u2004\u2002", "\u20022\u2004\u2002", "\u20021\u2004\u2002"};
+        if (color == ChessGame.TeamColor.WHITE) {
+            drawHeadersForward(out);
 
-        String[] whitePieces = {EscapeSequences.WHITE_ROOK, EscapeSequences.WHITE_KNIGHT, EscapeSequences.WHITE_BISHOP, EscapeSequences.WHITE_QUEEN, EscapeSequences.WHITE_KING, EscapeSequences.WHITE_BISHOP, EscapeSequences.WHITE_KNIGHT, EscapeSequences.WHITE_ROOK};
-        String[] whitePawns = {EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN};
+            highlightChessBoardForward(out, game, start);
 
-        String[] blackPieces = {EscapeSequences.BLACK_ROOK, EscapeSequences.BLACK_KNIGHT, EscapeSequences.BLACK_BISHOP, EscapeSequences.BLACK_QUEEN, EscapeSequences.BLACK_KING, EscapeSequences.BLACK_BISHOP, EscapeSequences.BLACK_KNIGHT, EscapeSequences.BLACK_ROOK};
-        String[] blackPawns = {EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN};
-        String[] rowHeaders = {"", "8", "7", "6", "5", "4", "3", "2", "1", " "};
+            drawHeadersForward(out);
+        } else {
+            drawHeadersBackward(out);
 
-        out.print(SET_BG_COLOR_DARK_GREY);
+            highlightChessBoardBackward(out, game, start);
 
-        for (int boardRow = 0; boardRow < SQUARE_SIZE_IN_CHARS; ++boardRow) {
-            for (int boardCol = 0; boardCol < SQUARE_SIZE_IN_CHARS; ++boardCol) {
-                if (boardRow == 0 && boardCol == 0) {
-                    out.print(preSpace);
-                    for (String letter : letters) {
-                        out.print(letter);
-                    }
-                    out.print(postSpace);
-                } else if (boardRow == 1 && boardCol == 1) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[0]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + whitePieces[i]);
-                        } else {
-                            if (i % 2 == 1) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + whitePieces[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + whitePieces[i]);
-                            }
-                        }
+            drawHeadersBackward(out);
+        }
 
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[7]);
+        out.print(SET_BG_COLOR_WHITE);
 
-                } else if (boardRow == 2 && boardCol == 2) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[1]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + whitePawns[i]);
-                        } else {
-                            if (i % 2 == 0) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + whitePawns[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + whitePawns[i]);
-                            }
-                        }
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
 
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[6]);
+    private static void highlightChessBoardBackward(PrintStream outStream, ChessGame chessGame, ChessPosition startPosition) {
+        var validMoves = chessGame.validMoves(startPosition);
+        var board = chessGame.getBoard();
 
-                } else if (boardRow == 3 && boardCol == 3) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[2]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                        } else {
-                            if (i % 2 == 1) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + boardBackColors[i]);
-                            }
-                        }
+        for (int row = 0; row < 8; row++) {
+            outStream.print(SET_BG_COLOR_LIGHT_GREY);
+            outStream.print(" ");
+            outStream.print(row + 1);
+            outStream.print(" ");
+            for (int col = 0; col < 8; col++) {
+                ChessPosition endPosition = new ChessPosition(row + 1, 8 - col);
+                ChessPiece chessPiece = board.getPiece(endPosition);
+                ChessMove chessMove = new ChessMove(startPosition, endPosition, null);
 
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[5]);
-
-                } else if (boardRow == 4 && boardCol == 4) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[3]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                        } else {
-                            if (i % 2 == 0) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + boardBackColors[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[4]);
-
-                } else if (boardRow == 5 && boardCol == 5) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[4]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                        } else {
-                            if (i % 2 == 1) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + boardBackColors[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[3]);
-
-                } else if (boardRow == 6 && boardCol == 6) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[5]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                        } else {
-                            if (i % 2 == 0) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + boardBackColors[i]);
-                            }
-                        }
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[2]);
-
-                } else if (boardRow == 7 && boardCol == 7) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[6]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + blackPawns[i]);
-                        } else {
-                            if (i % 2 == 1) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + blackPawns[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + blackPawns[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[1]);
-
-                } else if (boardRow == 8 && boardCol == 8) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[7]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + blackPieces[i]);
-                        } else {
-                            if (i % 2 == 0) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + blackPieces[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + blackPieces[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[0]);
-                } else if (boardRow == 9 && boardCol == 9) {
-                    out.print("\n");
-                    out.print(SET_BG_COLOR_DARK_GREY + preSpace);
-                    for (String letter : lettersReverse) {
-                        out.print(SET_BG_COLOR_DARK_GREY + letter);
-                    }
-                    out.print(postSpace);
+                printBackground(outStream, validMoves, col, row, chessMove);
+                if (Objects.equals(startPosition, endPosition)) {
+                    outStream.print(SET_BG_COLOR_YELLOW);
                 }
 
-                if (boardCol != 0) {
-                    out.print(RESET_BG_COLOR);
-                }
+                printNull(outStream, chessPiece);
+            }
+            outStream.print(SET_TEXT_COLOR_BLACK);
+            outStream.print(SET_BG_COLOR_LIGHT_GREY);
+            outStream.print(" ");
+            outStream.print(row + 1);
+            outStream.print(" ");
+
+            outStream.print(SET_BG_COLOR_WHITE);
+            outStream.println();
+        }
+    }
+
+    private static void printBackground(PrintStream outStream, Collection<ChessMove> validMoves, int col, int row, ChessMove chessMove) {
+        if ((col + row) % 2 == 0) {
+            if (validMoves.contains(chessMove)) {
+                outStream.print(SET_BG_COLOR_GREEN);
+            } else {
+                outStream.print(SET_BG_COLOR_WHITE);
+            }
+        } else {
+            if (validMoves.contains(chessMove)) {
+                outStream.print(SET_BG_COLOR_DARK_GREEN);
+            } else {
+                outStream.print(SET_BG_COLOR_BLACK);
             }
         }
     }
 
+    private static void highlightChessBoardForward(PrintStream outStream, ChessGame chessGame, ChessPosition startPosition) {
+        var validMoves = chessGame.validMoves(startPosition);
+        var board = chessGame.getBoard();
 
-    private static void drawWhiteBoard(PrintStream out) {
+        for (int row = 0; row < 8; row++) {
+            outStream.print(SET_BG_COLOR_LIGHT_GREY);
+            outStream.print(" ");
+            outStream.print(BOARD_SIZE_SQUARES - row);
+            outStream.print(" ");
+            for (int col = 0; col < 8; col++) {
+                ChessPosition newPos = new ChessPosition(8 - row, col + 1);
+                ChessPiece piece = board.getPiece(newPos);
+                ChessMove move = new ChessMove(startPosition, newPos, null);
 
-        String[] boardBackColors = {EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY, EscapeSequences.EMPTY};
-
-
-        String preSpace = "\u2002\u2006 \u2009\u2002";
-        String postSpace = "\u2002 \u200A\u2002";
-        String[] letters = {"\u2002\u2005a\u200A\u2005\u2002", "\u2002\u2005b\u2005\u2002", "\u2002\u2005c\u2005\u2002", "\u2002\u2005\u200Ad\u2005\u2002", "\u2002\u200A\u200Ae\u2005\u2002", "\u2002\u2005f\u2005\u2002", "\u2002\u2005\u200Ag\u200A\u2005\u2002", "\u2002\u2005h\u2005\u2002"};
-        String[] lettersReverse = {"\u2002\u2005h\u200A\u2005\u2002", "\u2002\u2005g\u2005\u2002", "\u2002\u2005f\u2005\u2002", "\u2002\u2005\u200Ae\u2005\u2002", "\u2002\u200A\u200Ad\u2005\u2002", "\u2002\u2005c\u2005\u2002", "\u2002\u2005\u200Ab\u200A\u2005\u2002", "\u2002\u2005a\u2005\u2002"};
-        String[] numbers = {"\u20028\u2004\u2002", "\u20027\u2004\u2002", "\u20026\u2004\u2002", "\u20025\u2004\u2002", "\u20024\u2004\u2002", "\u20023\u2004\u2002", "\u20022\u2004\u2002", "\u20021\u2004\u2002"};
-
-        String[] whitePieces = {EscapeSequences.WHITE_ROOK, EscapeSequences.WHITE_KNIGHT, EscapeSequences.WHITE_BISHOP, EscapeSequences.WHITE_QUEEN, EscapeSequences.WHITE_KING, EscapeSequences.WHITE_BISHOP, EscapeSequences.WHITE_KNIGHT, EscapeSequences.WHITE_ROOK};
-        String[] whitePawns = {EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN, EscapeSequences.WHITE_PAWN};
-
-        String[] blackPieces = {EscapeSequences.BLACK_ROOK, EscapeSequences.BLACK_KNIGHT, EscapeSequences.BLACK_BISHOP, EscapeSequences.BLACK_QUEEN, EscapeSequences.BLACK_KING, EscapeSequences.BLACK_BISHOP, EscapeSequences.BLACK_KNIGHT, EscapeSequences.BLACK_ROOK};
-        String[] blackPawns = {EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN, EscapeSequences.BLACK_PAWN};
-        String[] rowHeaders = {"", "8", "7", "6", "5", "4", "3", "2", "1", " "};
-
-        out.print(SET_BG_COLOR_DARK_GREY);
-
-        for (int boardRow = 0; boardRow < SQUARE_SIZE_IN_CHARS; ++boardRow) {
-            for (int boardCol = 0; boardCol < SQUARE_SIZE_IN_CHARS; ++boardCol) {
-                if (boardRow == 0 && boardCol == 0) {
-                    out.print(preSpace);
-                    for (String letter : letters) {
-                        out.print(letter);
-                    }
-                    out.print(postSpace);
-                } else if (boardRow == 1 && boardCol == 1) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[0]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + blackPieces[i]);
-                        } else {
-                            if (i % 2 == 1) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + blackPieces[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + blackPieces[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[7]);
-
-                } else if (boardRow == 2 && boardCol == 2) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[1]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + blackPawns[i]);
-                        } else {
-                            if (i % 2 == 0) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + blackPawns[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + blackPawns[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[6]);
-
-                } else if (boardRow == 3 && boardCol == 3) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[2]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                        } else {
-                            if (i % 2 == 1) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + boardBackColors[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[5]);
-
-                } else if (boardRow == 4 && boardCol == 4) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[3]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                        } else {
-                            if (i % 2 == 0) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + boardBackColors[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[4]);
-
-                } else if (boardRow == 5 && boardCol == 5) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[4]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                        } else {
-                            if (i % 2 == 1) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + boardBackColors[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[3]);
-
-                } else if (boardRow == 6 && boardCol == 6) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[5]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                        } else {
-                            if (i % 2 == 0) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + boardBackColors[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + boardBackColors[i]);
-                            }
-                        }
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[2]);
-
-                } else if (boardRow == 7 && boardCol == 7) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[6]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + whitePawns[i]);
-                        } else {
-                            if (i % 2 == 1) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + whitePawns[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + whitePawns[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[1]);
-
-                } else if (boardRow == 8 && boardCol == 8) {
-                    out.print("\n");
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[7]);
-                    for (int i = 0; i < 8; i++) {
-                        if (i == 0) {
-                            out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + whitePieces[i]);
-                        } else {
-                            if (i % 2 == 0) {// odd
-                                out.print(SET_BG_COLOR_DARK_GREEN + SET_TEXT_COLOR_BLACK + whitePieces[i]);
-                            } else {
-                                out.print(SET_BG_COLOR_WHITE + whitePieces[i]);
-                            }
-                        }
-
-                    }
-                    out.print(SET_TEXT_COLOR_WHITE + SET_BG_COLOR_DARK_GREY + numbers[0]);
-                } else if (boardRow == 9 && boardCol == 9) {
-                    out.print("\n");
-                    out.print(SET_BG_COLOR_DARK_GREY + preSpace);
-                    for (String letter : lettersReverse) {
-                        out.print(SET_BG_COLOR_DARK_GREY + letter);
-                    }
-                    out.print(postSpace);
+                printBackground(outStream, validMoves, col, row, move);
+                if (Objects.equals(newPos, startPosition)) {
+                    outStream.print(SET_BG_COLOR_YELLOW);
                 }
 
-                if (boardCol != 0) {
-                    out.print(RESET_BG_COLOR);
-                }
+                printNull(outStream, piece);
             }
+            outStream.print(SET_TEXT_COLOR_BLACK);
+            outStream.print(SET_BG_COLOR_LIGHT_GREY);
+            outStream.print(" ");
+            outStream.print(BOARD_SIZE_SQUARES - row);
+            outStream.print(" ");
+
+            outStream.println(SET_BG_COLOR_WHITE);
         }
+
+    }
+
+    private static void printNull(PrintStream outStream, ChessPiece chessPiece) {
+        if (chessPiece == null) {
+            outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
+        } else if (chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            outStream.print(SET_TEXT_COLOR_BLUE);
+            outStream.print(chessPiece);
+        } else if (chessPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            outStream.print(SET_TEXT_COLOR_RED);
+            outStream.print(chessPiece);
+        }
+    }
+
+    private static void drawHeadersBackward(PrintStream outStream) {
+        setBlack(outStream);
+
+        outStream.print(SET_BG_COLOR_LIGHT_GREY);
+
+        outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
+        for (int boardCol = 0; boardCol < BOARD_SIZE_SQUARES; ++boardCol) {
+            printHeaderText(outStream, LETTER_HEADERS[BOARD_SIZE_SQUARES - boardCol - 1]);
+
+        }
+        outStream.print(SET_BG_COLOR_LIGHT_GREY);
+        outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
+
+        outStream.println(SET_BG_COLOR_WHITE);
+    }
+
+    private static void drawHeadersForward(PrintStream outStream) {
+
+        setBlack(outStream);
+
+        outStream.print(SET_BG_COLOR_LIGHT_GREY);
+
+        outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
+        for (int boardCol = 0; boardCol < BOARD_SIZE_SQUARES; ++boardCol) {
+            printHeaderText(outStream, LETTER_HEADERS[boardCol]);
+
+        }
+        outStream.print(SET_BG_COLOR_LIGHT_GREY);
+        outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
+
+        outStream.println(SET_BG_COLOR_WHITE);
+
+    }
+
+    private static void printHeaderText(PrintStream outStream, String currentPlayer) {
+        outStream.print(SET_BG_COLOR_LIGHT_GREY);
+
+        outStream.print(currentPlayer);
+
+        setBlack(outStream);
+    }
+
+    private static void drawChessBoardForward(PrintStream outStream, ChessBoard chessBoard) {
+        for (int row = 0; row < 8; row++) {
+            outStream.print(SET_BG_COLOR_LIGHT_GREY);
+            outStream.print(" ");
+            outStream.print(BOARD_SIZE_SQUARES - row);
+            outStream.print(" ");
+            for (int col = 0; col < 8; col++) {
+                if ((col + row) % 2 == 0) {
+                    outStream.print(SET_BG_COLOR_WHITE);
+                } else {
+                    outStream.print(SET_BG_COLOR_BLACK);
+                }
+
+                ChessPiece piece = chessBoard.getPiece(new ChessPosition(8 - row, col + 1));
+                printNull(outStream, piece);
+            }
+            outStream.print(SET_TEXT_COLOR_BLACK);
+            outStream.print(SET_BG_COLOR_LIGHT_GREY);
+            outStream.print(" ");
+            outStream.print(BOARD_SIZE_SQUARES - row);
+            outStream.print(" ");
+
+            outStream.println(SET_BG_COLOR_WHITE);
+        }
+    }
+
+    private static void drawChessBoardBackward(PrintStream outStream, ChessBoard chessBoard) {
+        for (int row = 0; row < 8; row++) {
+            outStream.print(SET_BG_COLOR_LIGHT_GREY);
+            outStream.print(" ");
+            outStream.print(row + 1);
+            outStream.print(" ");
+            for (int col = 0; col < 8; col++) {
+                if ((col + row) % 2 == 0) {
+                    outStream.print(SET_BG_COLOR_WHITE);
+                } else {
+                    outStream.print(SET_BG_COLOR_BLACK);
+                }
+
+                ChessPiece piece = chessBoard.getPiece(new ChessPosition(row + 1, 8 - col));
+                printNull(outStream, piece);
+            }
+            outStream.print(SET_TEXT_COLOR_BLACK);
+            outStream.print(SET_BG_COLOR_LIGHT_GREY);
+            outStream.print(" ");
+            outStream.print(row + 1);
+            outStream.print(" ");
+
+            outStream.print(SET_BG_COLOR_WHITE);
+            outStream.println();
+        }
+    }
+
+    private static void setBlack(PrintStream outStream) {
+        outStream.print(SET_BG_COLOR_BLACK);
+        outStream.print(SET_TEXT_COLOR_BLACK);
     }
 
 

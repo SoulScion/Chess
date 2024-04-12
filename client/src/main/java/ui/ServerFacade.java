@@ -1,5 +1,6 @@
 package ui;
 
+import errorExceptions.ServerResponseException;
 import model.AuthData;
 import model.UserData;
 import model.*;

@@ -17,7 +17,7 @@ public class ClientRepl {
 
         System.out.print(SET_BG_COLOR_DARK_GREY);
         System.out.println("Welcome to CS240 Chess! Input display to get started.");
-        System.out.print(client.display());
+        System.out.print(client.displayHelp());
 
         while (evalResult.equals("quit") != true) {
             printUserInputLine();

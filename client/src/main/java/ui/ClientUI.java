@@ -2,24 +2,43 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
+import errorExceptions.ServerResponseException;
 import model.*;
+
+import webSocketMessages.serverMessages.LoadGameMessage;
+import webSocketMessages.userCommands.MakeMoveCommand;
+import websocket.NotifyHandler;
+import websocket.WebSocketFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
-
+import java.util.concurrent.ConcurrentHashMap;
 import static ui.EscapeSequences.*;
 
 public class ClientUI {
     public static ClientState userState = ClientState.LOGGED_OUT;
 
-    private ClientRepl clientRepl;
     private ServerFacade facadeServer;
     private ArrayList<GameDataResponse> listOfGames;
+    private String serverURL;
+    private NotifyHandler repl;
+    private ArrayList<GameDataResponse> allGames;
+    private ConcurrentHashMap<Integer, GameData> gameObjects;
+    private final WebSocketFacade webFacade;
+    private GameData overallGameData;
+    private ChessGame.TeamColor teamColor;
+    private AuthData overallAuthData;
 
-    public ClientUI(String currentURL, ClientRepl currentRepl) {
+    public ClientUI(String currentURL, NotifyHandler currentRepl) {
         facadeServer = new ServerFacade(currentURL);
-        this.clientRepl = currentRepl;
+        this.serverURL = currentURL;
+        this.repl = currentRepl;
+        this.webFacade = new WebSocketFacade(this.serverURL, this.repl);
+
     }
 
     public String evaluateLine(String inputLine) {
@@ -33,52 +52,45 @@ public class ClientUI {
                 case "Logout" -> logout(inputParamaters);
                 case "Create" -> createGame(inputParamaters);
                 case "List" -> displayAllGames();
-                case "Join", "Observe" -> joinGame(inputParamaters);
+                case "Join" -> joinGame(inputParamaters);
+                case "Observe" -> observeGame(inputParamaters);
                 case "clearDatabase" -> clearData();
                 case "Quit" -> "Quit";
-                default -> display();
+                case "Move" -> makeMove(inputParamaters);
+                case "Redraw" -> redrawChessBoard();
+                case "Highlight" -> highlightMoves(inputParamaters);
+                case "Resign" -> resignGame();
+                case "Leave" -> leaveGame();
+                default -> displayHelp();
 
             };
-
+        } catch (ServerResponseException error) {
+            return "ERROR: 500, Server";
         } catch (ClientAccessException error) {
-            return "ERROR: 500";
+            return "ERROR: 500, Client";
         }
+
 
     }
 
-    public String display() {
-        String[] options = {
-                "Create <NAME>",
-                "List",
-                "Join <ID> [White|Black|<empty>]",
-                "Observe <ID>",
-                "Logout",
-                "Help",
-                "Quit"
-        };
-        String[] smallDescriptions = {
-                "Creates a game given a name.",
-                "List all games currently on the server.",
-                "Join a game to play or spectate.",
-                "Spectate a ongoing game.",
-                "Logout from this server.",
-                "Goes further into detail on all commands. (This displays nothing of actual use.)",
-                "Go back to the main menu."
-        };
-
+    public String displayHelp() {
+        String[] options = {"Create {NAME}", "List", "Join <ID> [WHITE|BLACK|{empty}]", "Observe {ID}", "Logout", "Quit", "Help"};
+        String[] smallDescriptions = {"Allows a user to create a game.",
+                "Lists all games for a user.",
+                "Allows a user to join a game.",
+                "Allows a user to observe a game.",
+                "Logs a user out.",
+                "Tells the server when a user is finished playing.",
+                "Lists all possible options and longer descriptions (No need to use this command."};
         if (userState == ClientState.LOGGED_OUT) {
-            options = new String[]{
-                    "Register <USERNAME> <PASSWORD> <EMAIL>",
-                    "Login <USERNAME> <PASSWORD>",
-                    "Help",
-                    "Quit"
-            };
-            smallDescriptions = new String[]{
-                    "Register yourself to the server.",
-                    "Login to the server in order to play.",
-                    "Goes further into detail on all commands. (This displays nothing of actual use.)",
-                    "Exit the Chess Application."
-            };
+            options = new String[]{"Register {USERNAME} {PASSWORD} {EMAIL}", "Login {USERNAME} {PASSWORD}", "Quit", "Help"};
+            smallDescriptions = new String[]{"create an account", "login and play", "stop playing", "list possible options"};
+        } else if (userState == ClientState.IN_GAME) {
+            options = new String[]{"Redraw", "Move {START} {END} [{PIECE}|{empty}]", "Highlight {START}", "Resign", "Leave", "Help"};
+            smallDescriptions = new String[]{"Allows a user to redraw the chessboard.", "Allows a user to move a piece from {START} position to {END} position with {PIECE} as possible pawn promotion.", "Allows a user to highlight all legal moves from {START}.", "Allows a user to resign the game.", "Allows a user to leave the game.", "Displays options and their details."};
+        } else if (userState == ClientState.RESIGNED) {
+            options = new String[]{"Redraw", "Leave", "Help"};
+            smallDescriptions = new String[]{"Allows a user to redraw the chessboard.", "Allows a user to eaves the game.", "Displays options and their details."};
         }
 
         StringBuilder displayOutput = new StringBuilder();
@@ -95,6 +107,71 @@ public class ClientUI {
 
     }
 
+    private String leaveGame() throws ServerResponseException {
+        if (userState != ClientState.IN_GAME && userState != ClientState.RESIGNED) {
+            throw new ServerResponseException(400, "Only available in game");
+        }
+        webFacade.leave(overallAuthData.authToken(), overallGameData.gameID());
+        userState = ClientState.LOGGED_IN;
+        return "";
+    }
+
+    private String resignGame() throws ServerResponseException {
+        if (userState != ClientState.IN_GAME) {
+            throw new ServerResponseException(400, "Only available in game");
+        }
+        webFacade.resign(overallAuthData.authToken(), overallGameData.gameID());
+        userState = ClientState.RESIGNED;
+        return "";
+    }
+
+    private String highlightMoves(String[] params) throws ServerResponseException {
+        if (userState != ClientState.IN_GAME) {
+            throw new ServerResponseException(400, "Only available in game");
+        }
+        var startPos = parsePosition(params[0]);
+        addNewGame();
+        ChessBoardUI.highlight(overallGameData.game(), teamColor, startPos);
+        return "";
+    }
+
+    private String redrawChessBoard() throws ServerResponseException {
+        if (userState != ClientState.IN_GAME) {
+            throw new ServerResponseException(400, "Only available in game");
+        }
+        webFacade.getGame(overallAuthData.authToken(), overallGameData.gameID());
+        return "";
+    }
+
+    private String makeMove(String[] params) throws ServerResponseException {
+        if (params.length < 2) {
+            throw new ServerResponseException(400, "Invalid move");
+        }
+        var start = params[0];
+        var end = params[1];
+        ChessPosition startPosition = parsePosition(start.toLowerCase());
+        ChessPosition endPosition = parsePosition(end.toLowerCase());
+
+        ChessPiece.PieceType promotionPiece = null;
+        if (params.length == 3) {
+            promotionPiece = ChessPiece.PieceType.valueOf(params[2].toUpperCase());
+        }
+
+        ChessMove move = new ChessMove(startPosition, endPosition, promotionPiece);
+        webFacade.makeMove(overallAuthData.authToken(), overallGameData.gameID(), move);
+
+        return "";
+    }
+
+    private ChessPosition parsePosition(String pos) throws ServerResponseException {
+        if (pos.length() != 2) {
+            throw new ServerResponseException(400, "Invalid position: " + pos);
+        }
+        var col = pos.charAt(0) - 96;
+        var row = pos.charAt(1) - 48;
+        return new ChessPosition(row, col);
+    }
+
     private String register(String[] inputParameters) {
         if (userState == ClientState.LOGGED_IN) {
             return "In order to register a new user, you must be logged out.";
@@ -102,16 +179,16 @@ public class ClientUI {
 
         if (inputParameters.length == 3) {
             UserData newUser = new UserData(inputParameters[0], inputParameters[1], inputParameters[2]);
-            AuthData newUserAuth;
+
 
             try {
-                newUserAuth = facadeServer.register(newUser);
+                overallAuthData = facadeServer.register(newUser);
             } catch (ClientAccessException error) {
                 return "Invalid Authorization";
             }
 
             userState = ClientState.LOGGED_IN;
-            return "You are now logged in as" + newUserAuth.username();
+            return "You are now logged in as" + overallAuthData.username();
         }
         return "Invalid Authorization";
 
@@ -124,16 +201,16 @@ public class ClientUI {
 
         if (inputParameters.length == 2) {
             UserData newUser = new UserData(inputParameters[0], inputParameters[1], null);
-            AuthData newUserAuth;
+
 
             try {
-                newUserAuth = facadeServer.login(newUser);
+                overallAuthData = facadeServer.login(newUser);
             } catch (ClientAccessException error) {
                 return "Invalid Authorization";
             }
 
             userState = ClientState.LOGGED_IN;
-            return "You are now logged in as" + newUserAuth.username();
+            return "You are now logged in as" + overallAuthData.username();
         }
         return "Invalid Authorization";
 
@@ -188,59 +265,74 @@ public class ClientUI {
         if (userState == ClientState.LOGGED_OUT) {
             return "In order to join a game, you must be logged in.";
         }
-        int counter = Integer.parseInt(inputParameters[0]);
+
         try {
             addNewGame();
-            var currentGame = listOfGames.get(counter - 1);
-            if (inputParameters.length == 1) {
-                try {
-                    facadeServer.joinGame(new JoinRequest(currentGame.gameID(), null));
-                } catch (ClientAccessException error) {
-                    return "Error: Failed to join and Observe Game.";
-                }
-                ChessBoardUI.main(new String[]{new ChessBoard().toString()});
-                return "";
+            int idx = Integer.parseInt(inputParameters[0]);
+            int gameID = allGames.get(idx - 1).gameID();
+            overallGameData = gameObjects.get(gameID);
 
-            } else if (inputParameters.length == 2) {
-                if (Objects.equals(inputParameters[1].toLowerCase(), "white")) {
-                    if (currentGame.whiteUsername() != null) {
-                        return "White team is taken. Please, try again.";
-                    }
-
-                    ChessGame.TeamColor userColor = ChessGame.TeamColor.WHITE;
-                    try {
-                        facadeServer.joinGame(new JoinRequest(currentGame.gameID(), userColor));
-                    } catch (ClientAccessException error) {
-                        return "Error: Failed to join and Observe Game as White.";
-                    }
-                } else if (Objects.equals(inputParameters[1].toLowerCase(), "black")) {
-                    if (currentGame.whiteUsername() != null) {
-                        return "Black team is taken. Please, try again.";
-                    }
-
-                    ChessGame.TeamColor userColor = ChessGame.TeamColor.BLACK;
-                    try {
-                        facadeServer.joinGame(new JoinRequest(currentGame.gameID(), userColor));
-                    } catch (ClientAccessException error) {
-                        return "Error: Failed to join and Observe Game as Black.";
-                    }
-
-                } else {
-                    return "Gave an Invalid Color.";
-                }
-                ChessBoardUI.main(new String[]{new ChessBoard().toString()});
-                return "";
+            ChessGame.TeamColor color = parseColor(inputParameters.length == 2 ? inputParameters[1].toLowerCase() : null);
+            if (color == null) {
+                return "Invalid Color Chosen.";
             }
-        } catch (IndexOutOfBoundsException error) {
-            return "The game your trying to join doesn't exist.";
-        }
-        return "Given an invalid input";
 
+            if (allGames.get(idx - 1).spaceOccupied(color)) {
+                return String.format("%s is already taken.", color.name().toLowerCase());
+            }
+
+            facadeServer.joinGame(new JoinRequest(overallGameData.gameID(), color));
+            webFacade.joinPlayer(overallAuthData.authToken(), overallGameData.gameID(), color);
+            userState = ClientState.IN_GAME;
+            teamColor = color;
+            return "";
+        } catch (IndexOutOfBoundsException error) {
+            return "Game requested doesn't exist";
+        } catch (ServerResponseException error) {
+            return "Failed join and observe game, try again.";
+        }catch (ClientAccessException error) {
+            return "Failed to join and observe game, try again.";
+        } catch (NumberFormatException error) {
+            return "Invalid Input";
+        }
+    }
+
+    private String observeGame(String[] inputParameters) {
+        if (userState == ClientState.LOGGED_OUT) {
+            return "In order to join a game, you must be logged in.";
+        }
+
+        try {
+            addNewGame();
+            int idx = Integer.parseInt(inputParameters[0]);
+            int gameID = allGames.get(idx - 1).gameID();
+            overallGameData = gameObjects.get(gameID);
+
+            facadeServer.joinGame(new JoinRequest(overallGameData.gameID(), null));
+            webFacade.joinPlayer(overallAuthData.authToken(), overallGameData.gameID(), null);
+            userState = ClientState.IN_GAME;
+            return "";
+        } catch (IndexOutOfBoundsException error) {
+            return "Game requested doesn't exist";
+        } catch (ServerResponseException error) {
+            return "Failed join and observe game, try again.";
+        }catch (ClientAccessException error) {
+            return "Failed to join and observe game, try again.";
+        } catch (NumberFormatException error) {
+            return "Invalid Input";
+        }
     }
 
     private String clearData() throws ClientAccessException {
         facadeServer.clear();
         return "Database Deleted";
+    }
+
+    private ChessGame.TeamColor parseColor(String color) {
+        if (color != null && (color.equals("white") || color.equals("black"))) {
+            return ChessGame.TeamColor.valueOf(color.toUpperCase());
+        }
+        return null;
     }
 
 
