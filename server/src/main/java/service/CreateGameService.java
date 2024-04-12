@@ -8,6 +8,11 @@ import request_result.CreateGameResponse;
 import request_result.FailureResponse;
 
 public class CreateGameService {
+    private final GameDAO gameDAO;
+
+    public CreateGameService(GameDAO recievedgameDAO) {
+        this.gameDAO = recievedgameDAO;
+    }
 
     public Object createGame(GameDAO gameDAO, GameData data, String authToken, AuthDAO auth) throws DataAccessException {
         try {
@@ -26,5 +31,13 @@ public class CreateGameService {
             return new CreateGameResponse(0);
         }
 
+    }
+
+    public GameData getGameInCreateService(Integer gameID) throws DataAccessException {
+        return gameDAO.getGameData(gameID);
+    }
+
+    public void updateGameInCreateService(GameData gameData) throws DataAccessException {
+        gameDAO.updateGameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
     }
 }

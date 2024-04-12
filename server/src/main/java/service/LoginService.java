@@ -12,6 +12,12 @@ import request_result.RegisterResponse;
 import java.util.Objects;
 
 public class LoginService {
+    private final AuthDAO authDAO;
+
+    public LoginService(AuthDAO authDAO) {
+        this.authDAO = authDAO;
+    }
+
     public Object login(UserDAO userDAO, LoginRequest data, AuthDAO auth) throws DataAccessException {
         try {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -27,4 +33,9 @@ public class LoginService {
         }
 
     }
+
+    public String getUser(String authToken) throws DataAccessException {
+        return authDAO.getAuthData(authToken).username();
+    }
+
 }

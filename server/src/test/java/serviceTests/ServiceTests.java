@@ -51,9 +51,9 @@ public class ServiceTests {
 
     @Test
     public void loginPositive() {
-        LoginService loginService = new LoginService();
         AuthDAO authDAO = new MemoryAuthDAO();
         UserDAO userDAO = new MemoryUserDAO();
+        LoginService loginService = new LoginService(authDAO);
         try {
 
             userDAO.createUserData("username", "password", "email-1");
@@ -75,9 +75,9 @@ public class ServiceTests {
 
     @Test
     public void loginNegative() {
-        LoginService loginService = new LoginService();
         AuthDAO authDAO = new MemoryAuthDAO();
         UserDAO userDAO = new MemoryUserDAO();
+        LoginService loginService = new LoginService(authDAO);
         try {
 
             userDAO.createUserData("username", "password", "email-1");
@@ -149,9 +149,9 @@ public class ServiceTests {
 
     @Test
     public void listGamesPositive() {
-        ListGamesService listGamesService = new ListGamesService();
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
+        ListGamesService listGamesService = new ListGamesService(gameDAO);
         try {
 
             gameDAO.createGameData("user");
@@ -175,9 +175,9 @@ public class ServiceTests {
 
     @Test
     public void listGamesNegative() {
-        ListGamesService listGamesService = new ListGamesService();
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
+        ListGamesService listGamesService = new ListGamesService(gameDAO);
         try {
 
             gameDAO.createGameData("user");
@@ -201,9 +201,9 @@ public class ServiceTests {
 
     @Test
     public void CreateGamePositive() {
-        CreateGameService createGameService = new CreateGameService();
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
+        CreateGameService createGameService = new CreateGameService(gameDAO);
         try {
 
             AuthData authToken = authDAO.createAuthData("username");
@@ -227,9 +227,9 @@ public class ServiceTests {
 
     @Test
     public void CreateGameNegative() {
-        CreateGameService createGameService = new CreateGameService();
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
+        CreateGameService createGameService = new CreateGameService(gameDAO);
         try {
 
             AuthData authToken = authDAO.createAuthData("username");

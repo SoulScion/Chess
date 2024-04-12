@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import errorExceptions.ServerResponseException;
 import model.GameData;
 import model.UserData;
 import request_result.*;
@@ -10,6 +11,7 @@ import service.*;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Server {
@@ -45,6 +47,7 @@ public class Server {
         Spark.post("/session", this::loginMethod);
         Spark.delete("/session", this::logoutMethod);
         Spark.get("/game", this::listGamesMethod);
+        Spark.get("/objects", this::gameObjects);
         Spark.post("/game", this::createGameMethod);
         Spark.put("/game", this::joinGameMethod);
         Spark.delete("/db", this::clearAllMethod);
@@ -92,7 +95,7 @@ public class Server {
         // loginRequest user = new Gson().
 
         LoginRequest dataUser = new Gson().fromJson(request.body(), LoginRequest.class);
-        LoginService service = new LoginService();
+        LoginService service = new LoginService(memoryAuthDAO);
         var regResponse = service.login(memoryUserDAO, dataUser, memoryAuthDAO);
 
         if (regResponse instanceof FailureResponse) {
@@ -135,7 +138,7 @@ public class Server {
         String header = request.headers("authorization");
 
         //GameData dataGame = new Gson().fromJson(request.body(), GameData.class);
-        ListGamesService service = new ListGamesService();
+        ListGamesService service = new ListGamesService(memoryGameDAO);
         var regResponse = service.listGames(memoryGameDAO, header, memoryAuthDAO);
 
         if (regResponse instanceof FailureResponse) {
@@ -152,12 +155,25 @@ public class Server {
 
     }
 
+    private Object gameObjects(Request request, Response response) throws ServerResponseException, DataAccessException {
+        var authToken = request.headers("authorization");
+        // AuthService.authenticate(authToken);
+
+        ConcurrentHashMap<Integer, GameData> games;
+        ListGamesService service = new ListGamesService(memoryGameDAO);
+        games = ListGamesService.getChessGameObjects();
+
+        response.status(200);
+        response.body(new Gson().toJson(new GameObjects(games)));
+        return new Gson().toJson(new GameObjects(games));
+    }
+
     public Object createGameMethod(Request request, Response response) throws DataAccessException {
 
         String header = request.headers("authorization");
 
         GameData dataGame = new Gson().fromJson(request.body(), GameData.class);
-        CreateGameService service = new CreateGameService();
+        CreateGameService service = new CreateGameService(memoryGameDAO); //Changed this for phase 6
         var regResponse = service.createGame(memoryGameDAO, dataGame, header, memoryAuthDAO);
 
         if (regResponse instanceof FailureResponse) {

@@ -1,4 +1,4 @@
-package ErrorExceptions;
+package errorExceptions;
 
 public class ServerResponseException extends Exception {
     final private int statCode;

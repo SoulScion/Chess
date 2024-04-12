@@ -11,8 +11,18 @@ import request_result.ListGamesResponse;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ListGamesService {
+    private final GameDAO gameDAO;
+
+    /**
+     * Receives a GameDAO object to provide access to the game data
+     * @param gameDAO GameDAO object providing access to the game data
+     */
+    public ListGamesService(GameDAO gameDAO) {
+        this.gameDAO = gameDAO;
+    }
 
     public Object listGames(GameDAO gameDAO, String authToken, AuthDAO auth) throws DataAccessException {
         try {
@@ -30,5 +40,15 @@ public class ListGamesService {
             return new ListGamesResponse(null);
         }
 
+    }
+    
+    public ConcurrentHashMap<Integer, GameData> getChessGameObjects() throws DataAccessException {
+        Collection<GameData> listGames = gameDAO.listGameData();
+        ConcurrentHashMap<Integer, GameData> gameData = new ConcurrentHashMap<>();
+        for (var game : listGames) {
+            gameData.put(game.gameID(), game);
+        }
+
+        return gameData;
     }
 }
