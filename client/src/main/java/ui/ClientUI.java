@@ -23,7 +23,7 @@ public class ClientUI {
     public static ClientState userState = ClientState.LOGGED_OUT;
 
     private ServerFacade facadeServer;
-    private ArrayList<GameDataResponse> allGames;
+    private ArrayList<GameDataResponse> allGames = new ArrayList<>();
     private String serverURL;
     private NotifyHandler repl;
     private ConcurrentHashMap<Integer, GameData> gameObjects;
@@ -142,18 +142,18 @@ public class ClientUI {
         return "";
     }
 
-    private String makeMove(String[] params) throws ServerResponseException {
-        if (params.length < 2) {
+    private String makeMove(String[] inputParameters) throws ServerResponseException {
+        if (inputParameters.length < 2) {
             throw new ServerResponseException(400, "Invalid move");
         }
-        var start = params[0];
-        var end = params[1];
+        var start = inputParameters[0];
+        var end = inputParameters[1];
         ChessPosition startPosition = parsePosition(start.toLowerCase());
         ChessPosition endPosition = parsePosition(end.toLowerCase());
 
         ChessPiece.PieceType promotionPiece = null;
-        if (params.length == 3) {
-            promotionPiece = ChessPiece.PieceType.valueOf(params[2].toUpperCase());
+        if (inputParameters.length == 3) {
+            promotionPiece = ChessPiece.PieceType.valueOf(inputParameters[2].toUpperCase());
         }
 
         ChessMove move = new ChessMove(startPosition, endPosition, promotionPiece);
@@ -187,7 +187,7 @@ public class ClientUI {
             }
 
             userState = ClientState.LOGGED_IN;
-            return "You are now logged in as" + overallAuthData.username();
+            return "You are now logged in as " + overallAuthData.username();
         }
         return "Invalid Authorization";
 
@@ -209,7 +209,7 @@ public class ClientUI {
             }
 
             userState = ClientState.LOGGED_IN;
-            return "You are now logged in as" + overallAuthData.username();
+            return "You are now logged in as " + overallAuthData.username();
         }
         return "Invalid Authorization";
 
@@ -240,12 +240,13 @@ public class ClientUI {
         try {
             gameID = facadeServer.createGame(new GameName(name));
             addNewGame();
-            for (int idx = 0; idx < allGames.size(); idx ++) {
-                if (allGames.get(idx).gameID() == gameID.gameID()) {
-                    return "Game " + name + " created with ID " + (idx + 1);
-                }
-            }
-            return "Error creating game, please try again";
+            return "You created a new game and it has a name: " + name + " and game ID: " + gameID;
+//            for (int idx = 0; idx < allGames.size(); idx ++) {
+//                if (allGames.get(idx).gameID() == gameID.gameID()) {
+//                    return "Game " + name + " created with ID " + (idx + 1);
+//                }
+//            }
+            //return "Error creating game, please try again";
         } catch (ClientAccessException e) {
             return "Couldn't create game with that name, try again.";
         }
@@ -255,7 +256,13 @@ public class ClientUI {
         if (userState == ClientState.LOGGED_OUT) {
             return "In order to list all chess games, you must be logged in.";
         }
-        addNewGame();
+        try {
+            allGames = facadeServer.listGames();
+            gameObjects = facadeServer.getObjectsGame();
+        } catch (ClientAccessException e) {
+            return "Couldn't list game with that name, try again.";
+        }
+
         return createListOfGames();
 
     }
@@ -337,43 +344,56 @@ public class ClientUI {
 
     private void addNewGame() {
         try {
-            var newGames = facadeServer.listGames();
+            allGames = facadeServer.listGames();
             gameObjects = facadeServer.getObjectsGame();
-            ArrayList<GameDataResponse> tempGames = new ArrayList<>();
-
-            if (allGames != null) {
-                for (var currGame : allGames) {
-                    for (var newGame : newGames) {
-                        if (Objects.equals(newGame.gameID(), currGame.gameID())) {
-                            tempGames.add(newGame);
-                        }
-                    }
-                }
-                for (var newGame : newGames) {
-                    boolean found = false;
-                    for (var currGame : allGames) {
-                        if (Objects.equals(newGame.gameID(), currGame.gameID())) {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (!found) {
-                        tempGames.add(newGame);
-                    }
-                }
-            } else {
-                tempGames = newGames;
-            }
-            allGames = tempGames;
-
-            if (overallGameData != null) {
-                overallGameData = gameObjects.get(overallGameData.gameID());
-            }
         } catch (ClientAccessException e) {
-            System.out.println(e.getMessage());
+            System.out.print("Couldn't list game with that name, try again.");
         }
+
     }
+
+
+//        try {
+//            var newGames = facadeServer.listGames();
+//            gameObjects = facadeServer.getObjectsGame();
+//            ArrayList<GameDataResponse> tempGames = new ArrayList<>();
+//
+//            if (newGames == null) {
+//                return;
+//            }
+
+//            if (allGames != null) {
+//                for (var currGame : allGames) {
+//                    for (var newGame : newGames) {
+//                        if (Objects.equals(newGame.gameID(), currGame.gameID())) {
+//                            tempGames.add(newGame);
+//                        }
+//                    }
+//                }
+//                for (var newGame : newGames) {
+//                    boolean found = false;
+//                    for (var currGame : allGames) {
+//                        if (Objects.equals(newGame.gameID(), currGame.gameID())) {
+//                            found = true;
+//                            break;
+//                        }
+//                    }
+//
+//                    if (!found) {
+//                        tempGames.add(newGame);
+//                    }
+//                }
+//            } else {
+//                tempGames = newGames;
+//            }
+//            allGames = tempGames;
+//
+//            if (overallGameData != null) {
+//                overallGameData = gameObjects.get(overallGameData.gameID());
+//            }
+//        } catch (ClientAccessException e) {
+//            System.out.println(e.getMessage());
+//        }
 
     private String createListOfGames(){
         StringBuilder listString = new StringBuilder();
@@ -382,7 +402,8 @@ public class ClientUI {
         listString.append("_____________________________________________________\n");
         for (int counter = 0; counter < allGames.size(); counter++) {
             var currentGame = allGames.get(counter);
-            String.format("| %-4d| %-14s| %-14s| %-12s|\n", counter+1, currentGame.whiteUsername(), currentGame.blackUsername(), currentGame.gameName());
+            listString.append(String.format("| %-4d| %-14s| %-14s| %-12s|\n", counter+1, currentGame.whiteUsername(), currentGame.blackUsername(), currentGame.gameName()));
+
             listString.append("_____________________________________________________\n");
         }
         return String.valueOf(listString);

@@ -1,5 +1,6 @@
 package ui;
 import chess.*;
+import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -10,8 +11,8 @@ import static ui.EscapeSequences.*;
 
 public class ChessBoardUI {
 
-    private static final String[] WHITE_PIECES = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
-    private static final String[] BLACK_PIECES = {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_QUEEN, BLACK_KING, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
+    private static final String[] WHITE_PIECES = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_PAWN};
+    private static final String[] BLACK_PIECES = {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_QUEEN, BLACK_KING, BLACK_PAWN};
     private static final String[] LETTER_HEADERS = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
     private static final int BOARD_SIZE_SQUARES = 8;
     private static final int LINE_WIDTH_CHARS = 1;
@@ -152,10 +153,34 @@ public class ChessBoardUI {
             outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
         } else if (chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
             outStream.print(SET_TEXT_COLOR_BLUE);
-            outStream.print(chessPiece);
-        } else if (chessPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            if (chessPiece.getPieceType() == ChessPiece.PieceType.ROOK) {
+                outStream.print(WHITE_PIECES[0]);
+            } else if (chessPiece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                outStream.print(WHITE_PIECES[1]);
+            } else if (chessPiece.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                outStream.print(WHITE_PIECES[2]);
+            } else if (chessPiece.getPieceType() == ChessPiece.PieceType.QUEEN) {
+                outStream.print(WHITE_PIECES[3]);
+            } else if (chessPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                outStream.print(WHITE_PIECES[4]);
+            } else if (chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                outStream.print(WHITE_PIECES[5]);
+            }
+        } else {
             outStream.print(SET_TEXT_COLOR_RED);
-            outStream.print(chessPiece);
+            if (chessPiece.getPieceType() == ChessPiece.PieceType.ROOK) {
+                outStream.print(BLACK_PIECES[0]);
+            } else if (chessPiece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                outStream.print(BLACK_PIECES[1]);
+            } else if (chessPiece.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                outStream.print(BLACK_PIECES[2]);
+            } else if (chessPiece.getPieceType() == ChessPiece.PieceType.QUEEN) {
+                outStream.print(BLACK_PIECES[3]);
+            } else if (chessPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                outStream.print(BLACK_PIECES[4]);
+            } else if (chessPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                outStream.print(BLACK_PIECES[5]);
+            }
         }
     }
 
@@ -167,6 +192,7 @@ public class ChessBoardUI {
         outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
         for (int boardCol = 0; boardCol < BOARD_SIZE_SQUARES; ++boardCol) {
             printHeaderText(outStream, LETTER_HEADERS[BOARD_SIZE_SQUARES - boardCol - 1]);
+            printHeaderText(outStream, "\u2004");
 
         }
         outStream.print(SET_BG_COLOR_LIGHT_GREY);
@@ -184,6 +210,7 @@ public class ChessBoardUI {
         outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
         for (int boardCol = 0; boardCol < BOARD_SIZE_SQUARES; ++boardCol) {
             printHeaderText(outStream, LETTER_HEADERS[boardCol]);
+            printHeaderText(outStream, "\u2004");
 
         }
         outStream.print(SET_BG_COLOR_LIGHT_GREY);
@@ -215,6 +242,7 @@ public class ChessBoardUI {
                 }
 
                 ChessPiece piece = chessBoard.getPiece(new ChessPosition(8 - row, col + 1));
+
                 printNull(outStream, piece);
             }
             outStream.print(SET_TEXT_COLOR_BLACK);

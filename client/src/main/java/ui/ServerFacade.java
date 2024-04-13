@@ -63,12 +63,12 @@ public class ServerFacade {
     }
 
     public ArrayList<GameDataResponse> listGames() throws ClientAccessException {
-        var pathURL = "/objects";
+        var pathURL = "/game";
         return this.requestOrder("GET", pathURL, null, ListAllGames.class).games();
     }
 
     public ConcurrentHashMap<Integer, GameData> getObjectsGame() throws ClientAccessException {
-        var pathURL = "/game";
+        var pathURL = "/objects";
         return this.requestOrder("GET", pathURL, null, GamesObjects.class).gameObjects();
     }
 
