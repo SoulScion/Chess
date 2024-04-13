@@ -23,10 +23,9 @@ public class ClientUI {
     public static ClientState userState = ClientState.LOGGED_OUT;
 
     private ServerFacade facadeServer;
-    private ArrayList<GameDataResponse> listOfGames;
+    private ArrayList<GameDataResponse> allGames;
     private String serverURL;
     private NotifyHandler repl;
-    private ArrayList<GameDataResponse> allGames;
     private ConcurrentHashMap<Integer, GameData> gameObjects;
     private final WebSocketFacade webFacade;
     private GameData overallGameData;
@@ -234,21 +233,21 @@ public class ClientUI {
 
     private String createGame(String[] inputParameters) {
         if (userState == ClientState.LOGGED_OUT) {
-            return "In order to create a new chess game, you must be logged in.";
+            return "Must login first";
         }
-        String gameName = String.join(" ", inputParameters);
-        GameID newGameID;
+        String name = String.join(" ", inputParameters);
+        GameID gameID;
         try {
-            newGameID = facadeServer.createGame(new GameName(gameName));
+            gameID = facadeServer.createGame(new GameName(name));
             addNewGame();
-            for (int counter = 0; counter < listOfGames.size(); counter++) {
-                if (listOfGames.get(counter).gameID() == newGameID.gameID()) {
-                    return "Game Created: " + gameName + " ID: " + (counter + 1);
+            for (int idx = 0; idx < allGames.size(); idx ++) {
+                if (allGames.get(idx).gameID() == gameID.gameID()) {
+                    return "Game " + name + " created with ID " + (idx + 1);
                 }
             }
-            return "Error: Failed to create game. Please try again.";
-        } catch (ClientAccessException error) {
-            return "Name already taken, please try a different game name.";
+            return "Error creating game, please try again";
+        } catch (ClientAccessException e) {
+            return "Couldn't create game with that name, try again.";
         }
     }
 
@@ -338,36 +337,41 @@ public class ClientUI {
 
     private void addNewGame() {
         try {
-            var currentGames = facadeServer.listGames();
-            ArrayList<GameDataResponse> tempList = new ArrayList<>();
+            var newGames = facadeServer.listGames();
+            gameObjects = facadeServer.getObjectsGame();
+            ArrayList<GameDataResponse> tempGames = new ArrayList<>();
 
-            if (listOfGames != null) {
-                for (var currentInList : listOfGames) {
-                    for (var newGame : currentGames) {
-                        if (Objects.equals(newGame.gameID(), currentInList.gameID())) {
-                            tempList.add(newGame);
+            if (allGames != null) {
+                for (var currGame : allGames) {
+                    for (var newGame : newGames) {
+                        if (Objects.equals(newGame.gameID(), currGame.gameID())) {
+                            tempGames.add(newGame);
                         }
                     }
                 }
-                for (var newGame : currentGames) {
-                    boolean gameSearch = false;
-                    for (var currentInList : listOfGames) {
-                        if (Objects.equals(newGame.gameID(), currentInList.gameID())) {
-                            gameSearch = true;
+                for (var newGame : newGames) {
+                    boolean found = false;
+                    for (var currGame : allGames) {
+                        if (Objects.equals(newGame.gameID(), currGame.gameID())) {
+                            found = true;
                             break;
                         }
                     }
-                    if (!gameSearch) {
-                        tempList.add(newGame);
+
+                    if (!found) {
+                        tempGames.add(newGame);
                     }
                 }
             } else {
-                tempList = currentGames;
+                tempGames = newGames;
             }
-            listOfGames = tempList;
+            allGames = tempGames;
 
-        } catch (ClientAccessException error) {
-            System.out.println(error.getMessage());
+            if (overallGameData != null) {
+                overallGameData = gameObjects.get(overallGameData.gameID());
+            }
+        } catch (ClientAccessException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -376,8 +380,8 @@ public class ClientUI {
         listString.append("_____________________________________________________\n");
         listString.append(String.format("| ID  | %-14s| %-14s| %-12s|\n", "White Player", "Black Player", "Game Name"));
         listString.append("_____________________________________________________\n");
-        for (int counter = 0; counter < listOfGames.size(); counter++) {
-            var currentGame = listOfGames.get(counter);
+        for (int counter = 0; counter < allGames.size(); counter++) {
+            var currentGame = allGames.get(counter);
             String.format("| %-4d| %-14s| %-14s| %-12s|\n", counter+1, currentGame.whiteUsername(), currentGame.blackUsername(), currentGame.gameName());
             listString.append("_____________________________________________________\n");
         }

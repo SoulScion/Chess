@@ -12,7 +12,7 @@ import java.util.Collection;
 public class ChessGame {
 
     private ChessBoard currentBoard;
-    private TeamColor currentTeamTurn;
+    private TeamColor currentTeamTurn = TeamColor.WHITE;
 
     public ChessGame() {
 
