@@ -24,17 +24,13 @@ public class ChessBoardUI {
         out.println(ERASE_SCREEN);
 
         if (color == ChessGame.TeamColor.WHITE) {
-            drawHeadersForward(out);
-
+            drawHeadersWhite(out);
             drawChessBoardForward(out, board);
-
-            drawHeadersForward(out);
+            drawHeadersWhite(out);
         } else {
-            drawHeadersBackward(out);
-
+            drawHeadersBlack(out);
             drawChessBoardBackward(out, board);
-
-            drawHeadersBackward(out);
+            drawHeadersBlack(out);
         }
 
         out.print(SET_BG_COLOR_WHITE);
@@ -46,21 +42,16 @@ public class ChessBoardUI {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         var board = game.getBoard();
 
-
         out.println(ERASE_SCREEN);
 
         if (color == ChessGame.TeamColor.WHITE) {
-            drawHeadersForward(out);
-
+            drawHeadersWhite(out);
             highlightChessBoardForward(out, game, start);
-
-            drawHeadersForward(out);
+            drawHeadersWhite(out);
         } else {
-            drawHeadersBackward(out);
-
+            drawHeadersBlack(out);
             highlightChessBoardBackward(out, game, start);
-
-            drawHeadersBackward(out);
+            drawHeadersBlack(out);
         }
 
         out.print(SET_BG_COLOR_WHITE);
@@ -72,44 +63,43 @@ public class ChessBoardUI {
         var validMoves = chessGame.validMoves(startPosition);
         var board = chessGame.getBoard();
 
-        for (int row = 0; row < 8; row++) {
+        for (int currentRow = 0; currentRow < 8; currentRow++) {
             outStream.print(SET_BG_COLOR_LIGHT_GREY);
             outStream.print(" ");
-            outStream.print(row + 1);
+            outStream.print(currentRow + 1);
             outStream.print(" ");
             for (int col = 0; col < 8; col++) {
-                ChessPosition endPosition = new ChessPosition(row + 1, 8 - col);
+                ChessPosition endPosition = new ChessPosition(currentRow + 1, 8 - col);
                 ChessPiece chessPiece = board.getPiece(endPosition);
                 ChessMove chessMove = new ChessMove(startPosition, endPosition, null);
 
-                printBackground(outStream, validMoves, col, row, chessMove);
+                printBackground(outStream, validMoves, col, currentRow, chessMove);
                 if (Objects.equals(startPosition, endPosition)) {
                     outStream.print(SET_BG_COLOR_YELLOW);
                 }
 
-                printNull(outStream, chessPiece);
+                printPiece(outStream, chessPiece);
             }
             outStream.print(SET_TEXT_COLOR_BLACK);
             outStream.print(SET_BG_COLOR_LIGHT_GREY);
             outStream.print(" ");
-            outStream.print(row + 1);
+            outStream.print(currentRow + 1);
             outStream.print(" ");
-
             outStream.print(SET_BG_COLOR_WHITE);
             outStream.println();
         }
     }
 
-    private static void printBackground(PrintStream outStream, Collection<ChessMove> validMoves, int col, int row, ChessMove chessMove) {
-        if ((col + row) % 2 == 0) {
+    private static void printBackground(PrintStream outStream, Collection<ChessMove> validMoves, int column, int row, ChessMove chessMove) {
+        if ((column + row) % 2 == 0) {
             if (validMoves.contains(chessMove)) {
-                outStream.print(SET_BG_COLOR_GREEN);
+                outStream.print(SET_BG_COLOR_DARK_GREEN);
             } else {
                 outStream.print(SET_BG_COLOR_WHITE);
             }
         } else {
             if (validMoves.contains(chessMove)) {
-                outStream.print(SET_BG_COLOR_DARK_GREEN);
+                outStream.print(SET_BG_COLOR_GREEN);
             } else {
                 outStream.print(SET_BG_COLOR_BLACK);
             }
@@ -120,35 +110,34 @@ public class ChessBoardUI {
         var validMoves = chessGame.validMoves(startPosition);
         var board = chessGame.getBoard();
 
-        for (int row = 0; row < 8; row++) {
+        for (int currentRow = 0; currentRow < 8; currentRow++) {
             outStream.print(SET_BG_COLOR_LIGHT_GREY);
             outStream.print(" ");
-            outStream.print(BOARD_SIZE_SQUARES - row);
+            outStream.print(BOARD_SIZE_SQUARES - currentRow);
             outStream.print(" ");
             for (int col = 0; col < 8; col++) {
-                ChessPosition newPos = new ChessPosition(8 - row, col + 1);
-                ChessPiece piece = board.getPiece(newPos);
-                ChessMove move = new ChessMove(startPosition, newPos, null);
+                ChessPosition newPos = new ChessPosition(8 - currentRow, col + 1);
+                ChessPiece chessPiece = board.getPiece(newPos);
+                ChessMove chessMove = new ChessMove(startPosition, newPos, null);
 
-                printBackground(outStream, validMoves, col, row, move);
+                printBackground(outStream, validMoves, col, currentRow, chessMove);
                 if (Objects.equals(newPos, startPosition)) {
                     outStream.print(SET_BG_COLOR_YELLOW);
                 }
 
-                printNull(outStream, piece);
+                printPiece(outStream, chessPiece);
             }
             outStream.print(SET_TEXT_COLOR_BLACK);
             outStream.print(SET_BG_COLOR_LIGHT_GREY);
             outStream.print(" ");
-            outStream.print(BOARD_SIZE_SQUARES - row);
+            outStream.print(BOARD_SIZE_SQUARES - currentRow);
             outStream.print(" ");
-
             outStream.println(SET_BG_COLOR_WHITE);
         }
 
     }
 
-    private static void printNull(PrintStream outStream, ChessPiece chessPiece) {
+    private static void printPiece(PrintStream outStream, ChessPiece chessPiece) {
         if (chessPiece == null) {
             outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
         } else if (chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
@@ -184,44 +173,39 @@ public class ChessBoardUI {
         }
     }
 
-    private static void drawHeadersBackward(PrintStream outStream) {
+    private static void drawHeadersBlack(PrintStream outStream) {
         setBlack(outStream);
-
-        outStream.print(SET_BG_COLOR_LIGHT_GREY);
+        outStream.print(SET_BG_COLOR_DARK_GREY);
 
         outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
-        for (int boardCol = 0; boardCol < BOARD_SIZE_SQUARES; ++boardCol) {
-            printHeaderText(outStream, LETTER_HEADERS[BOARD_SIZE_SQUARES - boardCol - 1]);
-            printHeaderText(outStream, "\u2004");
+        for (int boardColumn = 0; boardColumn < BOARD_SIZE_SQUARES; ++boardColumn) {
+            printHeader(outStream, LETTER_HEADERS[BOARD_SIZE_SQUARES - boardColumn - 1]);
+            printHeader(outStream, "\u2004");
 
         }
-        outStream.print(SET_BG_COLOR_LIGHT_GREY);
+        outStream.print(SET_BG_COLOR_DARK_GREY);
         outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
-
         outStream.println(SET_BG_COLOR_WHITE);
     }
 
-    private static void drawHeadersForward(PrintStream outStream) {
-
+    private static void drawHeadersWhite(PrintStream outStream) {
         setBlack(outStream);
-
-        outStream.print(SET_BG_COLOR_LIGHT_GREY);
+        outStream.print(SET_BG_COLOR_DARK_GREY);
 
         outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
         for (int boardCol = 0; boardCol < BOARD_SIZE_SQUARES; ++boardCol) {
-            printHeaderText(outStream, LETTER_HEADERS[boardCol]);
-            printHeaderText(outStream, "\u2004");
+            printHeader(outStream, LETTER_HEADERS[boardCol]);
+            printHeader(outStream, "\u2004");
 
         }
-        outStream.print(SET_BG_COLOR_LIGHT_GREY);
+        outStream.print(SET_BG_COLOR_DARK_GREY);
         outStream.print(EMPTY.repeat(LINE_WIDTH_CHARS));
-
         outStream.println(SET_BG_COLOR_WHITE);
 
     }
 
-    private static void printHeaderText(PrintStream outStream, String currentPlayer) {
-        outStream.print(SET_BG_COLOR_LIGHT_GREY);
+    private static void printHeader(PrintStream outStream, String currentPlayer) {
+        outStream.print(SET_BG_COLOR_DARK_GREY);
 
         outStream.print(currentPlayer);
 
@@ -238,19 +222,18 @@ public class ChessBoardUI {
                 if ((col + row) % 2 == 0) {
                     outStream.print(SET_BG_COLOR_WHITE);
                 } else {
-                    outStream.print(SET_BG_COLOR_BLACK);
+                    outStream.print(SET_BG_COLOR_DARK_GREEN);
                 }
 
                 ChessPiece piece = chessBoard.getPiece(new ChessPosition(8 - row, col + 1));
 
-                printNull(outStream, piece);
+                printPiece(outStream, piece);
             }
             outStream.print(SET_TEXT_COLOR_BLACK);
             outStream.print(SET_BG_COLOR_LIGHT_GREY);
             outStream.print(" ");
             outStream.print(BOARD_SIZE_SQUARES - row);
             outStream.print(" ");
-
             outStream.println(SET_BG_COLOR_WHITE);
         }
     }
@@ -265,18 +248,18 @@ public class ChessBoardUI {
                 if ((col + row) % 2 == 0) {
                     outStream.print(SET_BG_COLOR_WHITE);
                 } else {
-                    outStream.print(SET_BG_COLOR_BLACK);
+                    outStream.print(SET_BG_COLOR_DARK_GREEN);
                 }
 
                 ChessPiece piece = chessBoard.getPiece(new ChessPosition(row + 1, 8 - col));
-                printNull(outStream, piece);
+
+                printPiece(outStream, piece);
             }
             outStream.print(SET_TEXT_COLOR_BLACK);
             outStream.print(SET_BG_COLOR_LIGHT_GREY);
             outStream.print(" ");
             outStream.print(row + 1);
             outStream.print(" ");
-
             outStream.print(SET_BG_COLOR_WHITE);
             outStream.println();
         }

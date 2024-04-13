@@ -2,6 +2,8 @@ package ui;
 
 import java.util.Scanner;
 
+import chess.ChessGame;
+import chess.InvalidMoveException;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotifyMessage;
@@ -51,6 +53,17 @@ public class ClientRepl implements NotifyHandler{
     public void loadGameMessage(LoadGameMessage loadMessage) {
         var gameLoad = loadMessage.getNewGame();
         var colorLoad = loadMessage.getTeamColor();
+
+        if (gameLoad.game().isInCheckmate(gameLoad.game().getTeamTurn())) {
+            System.out.println("Checkmate!");
+        } else if (gameLoad.game().isInCheck(gameLoad.game().getTeamTurn())) {
+            System.out.println("Check!");
+        } else if (gameLoad.game().isInCheck(gameLoad.game().getTeamTurn())) {
+            System.out.println("Stalemate!");
+        }
+
+        clientUI.setGame(gameLoad);
+
         ChessBoardUI.main(gameLoad.game(), colorLoad);
         printPrompt();
     }

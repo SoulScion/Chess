@@ -151,17 +151,6 @@ public class ChessGame {
             setTeamTurn(ChessGame.TeamColor.WHITE);
         }
         // These were newly added:
-        if (isInCheckmate(getTeamTurn())) {
-            setTeamTurn(TeamColor.NONE);
-            throw new InvalidMoveException("Checkmate!");
-        }
-        if (isInStalemate(getTeamTurn())) {
-            setTeamTurn(TeamColor.NONE);
-            throw new InvalidMoveException("Stalemate!");
-        }
-        if (isInCheck(getTeamTurn())) {
-            throw new InvalidMoveException("Check!");
-        }
 
 
     }

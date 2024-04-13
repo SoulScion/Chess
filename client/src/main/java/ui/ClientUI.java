@@ -138,8 +138,14 @@ public class ClientUI {
         if (userState != ClientState.IN_GAME) {
             throw new ServerResponseException(400, "Only available in game");
         }
+        //Problem Line:
         webFacade.getGame(overallAuthData.authToken(), overallGameData.gameID());
+
         return "";
+    }
+
+    public void setGame(GameData game) {
+        overallGameData = game;
     }
 
     private String makeMove(String[] inputParameters) throws ServerResponseException {

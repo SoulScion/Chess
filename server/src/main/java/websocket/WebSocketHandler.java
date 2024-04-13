@@ -48,7 +48,7 @@ public class WebSocketHandler {
             }
         } catch (Exception error) {
             System.out.printf("Error occurred: %s%n", error.getMessage());
-            var errorNotif = new ErrorMessage(error.getMessage());
+            var errorNotif = new ErrorMessage("Error: " + error.getMessage());
             connectionSession.getRemote().sendString(new Gson().toJson(errorNotif));
         }
     }
@@ -103,6 +103,10 @@ public class WebSocketHandler {
         gameData.game().makeMove(moveCommand.getMove());
         this.createGameService.updateGameInCreateService(gameData);
         webConnections.broadcastChessGame(new LoadGameMessage(gameData));
+
+        //Add in checkmate:
+
+
         var moveNotif = new NotifyMessage("Move " + moveCommand.getMove().toString() + " made by " + username);
         webConnections.generalBroadcast(username, new Gson().toJson(moveNotif));
     }
