@@ -90,12 +90,7 @@ public class WebSocketFacade extends Endpoint{
     }
 
     public void leave(String authToken, Integer gameID) throws ServerResponseException {
-        try {
-            var command = new LeaveCommand(authToken, gameID);
-            send(new Gson().toJson(command));
-        } catch (IOException e) {
-            throw new ServerResponseException(500, e.getMessage());
-        }
+        resign(authToken, gameID);
     }
 
     public void send(String msg) throws IOException {

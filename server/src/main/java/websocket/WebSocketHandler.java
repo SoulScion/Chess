@@ -34,13 +34,13 @@ public class WebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void OnWebMessage(Session connectionSession, String message) throws IOException {
+    public void onWebMessage(Session connectionSession, String message) throws IOException {
         try {
             JsonObject object = JsonParser.parseString(message).getAsJsonObject();
             UserGameCommand.CommandType commandType = UserGameCommand.CommandType.valueOf(object.get("commandType").getAsString());
             switch (commandType) {
-                case JOIN_PLAYER -> PlayerJoin(new Gson().fromJson(message, PlayerJoinCommand.class), connectionSession);
-                case JOIN_OBSERVER -> ObserverJoin(new Gson().fromJson(message, ObserverJoinCommand.class), connectionSession);
+                case JOIN_PLAYER -> playerJoin(new Gson().fromJson(message, PlayerJoinCommand.class), connectionSession);
+                case JOIN_OBSERVER -> observerJoin(new Gson().fromJson(message, ObserverJoinCommand.class), connectionSession);
                 case MAKE_MOVE -> makeMove(new Gson().fromJson(message, MakeMoveCommand.class));
                 case LEAVE -> playerLeaveGame(new Gson().fromJson(message, LeaveCommand.class));
                 case RESIGN -> playerResignGame(new Gson().fromJson(message, ResignCommand.class));
@@ -75,15 +75,15 @@ public class WebSocketHandler {
         gameData.game().setTeamTurn(ChessGame.TeamColor.NONE);
         createGameService.updateGameInCreateService(gameData);
 
-        var ResignNotif = new NotifyMessage(String.format("Player %s has resigned the game.", username));
-        webConnections.generalBroadcast(null, new Gson().toJson(ResignNotif));
+        var resignNotif = new NotifyMessage(String.format("Player %s has resigned the game.", username));
+        webConnections.generalBroadcast(null, new Gson().toJson(resignNotif));
     }
 
     private void playerLeaveGame(LeaveCommand leaveCommand) throws DataAccessException, IOException {
         String loginUsername = loginService.getUser(leaveCommand.getAuthString());
         webConnections.removeConnection(loginUsername);
-        var LeaveNotif = new NotifyMessage(String.format("Player %s has left the game.", loginUsername));
-        webConnections.generalBroadcast(loginUsername, new Gson().toJson(LeaveNotif));
+        var leaveNotif = new NotifyMessage(String.format("Player %s has left the game.", loginUsername));
+        webConnections.generalBroadcast(loginUsername, new Gson().toJson(leaveNotif));
     }
 
     private void makeMove(MakeMoveCommand moveCommand) throws DataAccessException, InvalidMoveException, IOException, ServerResponseException {
@@ -111,7 +111,7 @@ public class WebSocketHandler {
         webConnections.generalBroadcast(username, new Gson().toJson(moveNotif));
     }
 
-    private void ObserverJoin(ObserverJoinCommand observeCommand, Session session) throws DataAccessException, IOException, ServerResponseException {
+    private void observerJoin(ObserverJoinCommand observeCommand, Session session) throws DataAccessException, IOException, ServerResponseException {
         String loginUsername = loginService.getUser(observeCommand.getAuthString());
         webConnections.addConnection(loginUsername, session);
         var gameServiceData = this.createGameService.getGameInCreateService(observeCommand.getObserverGameID());
@@ -124,7 +124,7 @@ public class WebSocketHandler {
         sendGame(gameServiceData, ChessGame.TeamColor.WHITE, loginUsername);
     }
 
-    public void PlayerJoin(PlayerJoinCommand command, Session session) throws DataAccessException, IOException {
+    public void playerJoin(PlayerJoinCommand command, Session session) throws DataAccessException, IOException {
         ChessGame.TeamColor playerColor = command.getPlayerColor();
         String loginUsername = loginService.getUser(command.getAuthString());
         webConnections.addConnection(loginUsername, session);

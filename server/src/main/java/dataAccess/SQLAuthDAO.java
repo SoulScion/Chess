@@ -19,7 +19,7 @@ public class SQLAuthDAO implements AuthDAO {
         String authToken = numbers.toString();
 
         var statement = "INSERT INTO authData (authToken, username) VALUES (?, ?)";
-        executeUpdate(statement, authToken, username);
+        executeUpdateAuth(statement, authToken, username);
 
         return new AuthData(authToken, username);
     }
@@ -49,15 +49,15 @@ public class SQLAuthDAO implements AuthDAO {
             throw new DataAccessException("ERROR: 500");
         }
         var command = "DELETE FROM authData WHERE authToken=?";
-        executeUpdate(command, authToken);
+        executeUpdateAuth(command, authToken);
     }
 
     public void deleteAllAuthData() throws DataAccessException{
         var command = "TRUNCATE authData";
-        executeUpdate(command);
+        executeUpdateAuth(command);
     }
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+    private int executeUpdateAuth(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {

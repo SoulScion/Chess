@@ -28,7 +28,7 @@ public class SQLGameDAO implements GameDAO{
         ChessGame newChessGame = new ChessGame();
         newChessGame.setBoard(chessBoard);
         var gameInfo = new Gson().toJson(newChessGame);
-        return executeUpdate(statement, null, null, gameName, gameInfo);
+        return executeUpdateGame(statement, null, null, gameName, gameInfo);
     }
 
     public void updateGameData(int givenGameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) throws DataAccessException{
@@ -84,7 +84,7 @@ public class SQLGameDAO implements GameDAO{
 
     public void deleteAllGameData() throws DataAccessException{
         var command = "TRUNCATE gameData";
-        executeUpdate(command);
+        executeUpdateGame(command);
     }
 
     private GameData readGameData(ResultSet rs) throws SQLException {
@@ -97,7 +97,7 @@ public class SQLGameDAO implements GameDAO{
         return new GameData(gameID, whiteUsername, blackUsername, gameName, chess);
     }
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+    private int executeUpdateGame(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {

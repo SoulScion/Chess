@@ -247,12 +247,6 @@ public class ClientUI {
             gameID = facadeServer.createGame(new GameName(name));
             addNewGame();
             return "You created a new game and it has a name: " + name + " and game ID: " + gameID;
-//            for (int idx = 0; idx < allGames.size(); idx ++) {
-//                if (allGames.get(idx).gameID() == gameID.gameID()) {
-//                    return "Game " + name + " created with ID " + (idx + 1);
-//                }
-//            }
-            //return "Error creating game, please try again";
         } catch (ClientAccessException e) {
             return "Couldn't create game with that name, try again.";
         }
@@ -357,49 +351,6 @@ public class ClientUI {
         }
 
     }
-
-
-//        try {
-//            var newGames = facadeServer.listGames();
-//            gameObjects = facadeServer.getObjectsGame();
-//            ArrayList<GameDataResponse> tempGames = new ArrayList<>();
-//
-//            if (newGames == null) {
-//                return;
-//            }
-
-//            if (allGames != null) {
-//                for (var currGame : allGames) {
-//                    for (var newGame : newGames) {
-//                        if (Objects.equals(newGame.gameID(), currGame.gameID())) {
-//                            tempGames.add(newGame);
-//                        }
-//                    }
-//                }
-//                for (var newGame : newGames) {
-//                    boolean found = false;
-//                    for (var currGame : allGames) {
-//                        if (Objects.equals(newGame.gameID(), currGame.gameID())) {
-//                            found = true;
-//                            break;
-//                        }
-//                    }
-//
-//                    if (!found) {
-//                        tempGames.add(newGame);
-//                    }
-//                }
-//            } else {
-//                tempGames = newGames;
-//            }
-//            allGames = tempGames;
-//
-//            if (overallGameData != null) {
-//                overallGameData = gameObjects.get(overallGameData.gameID());
-//            }
-//        } catch (ClientAccessException e) {
-//            System.out.println(e.getMessage());
-//        }
 
     private String createListOfGames(){
         StringBuilder listString = new StringBuilder();

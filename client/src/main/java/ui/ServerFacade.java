@@ -88,10 +88,6 @@ public class ServerFacade {
                 httpConnection.setRequestProperty("authorization", authToken);
             }
 
-            //if (requestData instanceof AuthData || requestData instanceof GameID || ((Objects.equals(requestType, "GET") || Objects.equals(requestType, "PUT")) && Objects.equals(pathURL, "/game"))) {
-            //    httpConnection.setRequestProperty("authorization", authToken);
-            //}
-
             writeRequestBody(requestData, httpConnection);
             httpConnection.connect();
             failureThrow(httpConnection);

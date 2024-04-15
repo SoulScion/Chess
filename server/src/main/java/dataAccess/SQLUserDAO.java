@@ -20,7 +20,7 @@ public class SQLUserDAO implements UserDAO {
         String hashPassword = encoder.encode(password);
 
 
-        executeUpdate(statement, username, hashPassword, email);
+        executeUpdateUser(statement, username, hashPassword, email);
 
     }
 
@@ -69,10 +69,10 @@ public class SQLUserDAO implements UserDAO {
 
     public void deleteAllUserData() throws DataAccessException{
         var command = "TRUNCATE user";
-        executeUpdate(command);
+        executeUpdateUser(command);
     }
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+    private int executeUpdateUser(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
